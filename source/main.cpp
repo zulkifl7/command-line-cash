@@ -14,7 +14,8 @@ int homeScreen(int from);
 int primaryOption(); // To display the options in the home screen
 
 // Login screen components
-string takePassword(); // function to take password and verify
+string takePassword(); // function to take password without exposing
+int verifyLogin();     // to verify username and password are correct
 
 // -- Main Function
 
@@ -34,15 +35,15 @@ int main()
 //? Login Screen - 1
 int loginScreen(int from)
 {
-    string username, password;
-    cout << "Enter username - ";
-    getline(cin, username);
-    password = takePassword();
-
-    if (true)
+    // checking if retured value is 0
+    // if it is not 0 telling error message and
+    // asking username and password again
+    while (verifyLogin() != 0)
     {
-        homeScreen(1);
+        cout << "Your username or Password is incorrect!" << endl;
     }
+
+    homeScreen(1);
 
     return 0;
 }
@@ -50,6 +51,7 @@ int loginScreen(int from)
 //? Home Screen - 2
 int homeScreen(int from)
 {
+    system("cls");
     // Primary operation will be repeated until user enters 7 to logout
     while ((primaryOption()) != 7)
     {
@@ -101,4 +103,29 @@ string takePassword()
     SetConsoleMode(hStdInput, mode);
 
     return ipt;
+}
+
+// to take username and password from user and
+// verify if username and password are correct
+
+int verifyLogin()
+{
+    // fixed username and password
+    static string username = "group6", password = "group6@123";
+    string gotUsername, gotPassword;
+    // getting username from user
+    cout << "Enter username - ";
+    getline(cin, gotUsername);
+    // getting password from user
+    gotPassword = takePassword();
+
+    // verifying if the username and password is correct
+    if (username == gotUsername && password == gotPassword)
+    {
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
 }
