@@ -2,6 +2,8 @@
   "files.associations": {
     "*.py": "python",
     "iosfwd": "cpp",
-    "limits": "cpp"
+    "limits": "cpp",
+    "ostream": "cpp",
+    "iostream": "cpp"
   }
 }

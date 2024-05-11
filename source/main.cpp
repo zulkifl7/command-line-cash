@@ -276,9 +276,31 @@ int primaryOption()
 // Function to create a new user account within the system
 int createNewAccount(int from)
 {
-    // Prompt user for necessary information (e.g., username, password, security questions)
+    // Prompt user for necessary information
+    // firstName - 0, lastName - 1, dateOfBirth - 2, nationalIdNumber - 3, userName - 4, password - 5
+    int numOfData = 6; // using a variable in case if we need another field we can just incriment one and add that field to keys and work
+    // To use a for loop to take the inputs
+    string keys[numOfData] = {"First Name", "Last Name", "Date Of Birth", "National Id Number", "Username", "Password"};
+    // to store the values user have entered
+    string values[numOfData];
+
+    // Discard a part of input beign in the buffer including newline
+    // in order to this to work we have to include <limits> header file
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
+    for (int i = 0; i < numOfData; i++)
+    {
+        cout << "Enter your " << keys[i] << " - ";
+        getline(cin, values[i]);
+    }
+
     // Validate user input to ensure secure password creation
-    // Store user information in a secure data store (e.g., database)
+    // Store user information in a file
+    ofstream file("accounts.txt");
+    for (int i = 0; i < numOfData; i++)
+    {
+        file << keys[i] << " - " << values[i] << "\n";
+    }
     // Handle potential errors during account creation (e.g., username already exists)
     cout << "New account created successfully!" << endl;
     return 3;
