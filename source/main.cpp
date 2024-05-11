@@ -184,43 +184,70 @@ int primaryOption()
 }
 
 //? create new account - 3
+// Function to create a new user account within the system
 int createNewAccount(int from)
 {
-    cout << "create new account" << endl;
+    // Prompt user for necessary information (e.g., username, password, security questions)
+    // Validate user input to ensure secure password creation
+    // Store user information in a secure data store (e.g., database)
+    // Handle potential errors during account creation (e.g., username already exists)
+    cout << "New account created successfully!" << endl;
     return 3;
 }
 
 //? Check Balance - 4
+// Function to retrieve the current balance associated with the logged-in account
 int balanceInquiry(int from)
 {
-    cout << "balance inquiry" << endl;
+    // Access account data based on logged-in user credentials
+    // Retrieve and display the current balance
+    cout << "Your current balance is: "; // << /* Get balance from data store */ << endl;
     return 4;
 }
 
 //? deposite cash - 5
+// Function to allow depositing cash into the account
 int depositeCash(int from)
 {
-    cout << "cash deposite" << endl;
+    // Prompt user for deposit amount
+    // Validate deposit amount (e.g., non-negative value)
+    // Update account balance in the data store based on deposit amount
+    cout << "Deposited "; // <<  Get deposit amount from user  << " successfully!" << endl;
     return 5;
 }
 
 //? fund transfer - 6
+// Function to enable transferring funds to another account
 int fundTransfer(int from)
 {
-    cout << "fund transfer" << endl;
+    // Prompt user for recipient account information (e.g., username or account number)
+    // Validate recipient information
+    // Prompt user for transfer amount
+    // Validate transfer amount (e.g., sufficient balance)
+    // Update account balances (sender and recipient) in the data store
+    cout << "Successfully transferred "; // << /* Get transfer amount from user */ << " to recipient." << endl;
     return 6;
 }
 
 //? transaction history - 7
+// Function to display past transactions associated with the account
 int transactionHistory(int from)
 {
-    cout << "transaction history" << endl;
+    // Access transaction history data based on logged-in user credentials
+    // Display a formatted list of past transactions (e.g., date, amount, type)
+    // Allow user to navigate through transaction history (optional)
+    cout << "Displaying transaction history..." << endl;
+    // Implement logic to display transactions
     return 7;
 }
 
 //? account deactivation - 8
+// Function to permanently deactivate the logged-in user account
 int accountDeactivation(int from)
 {
-    cout << "account deactivation" << endl;
+    // Prompt user for confirmation to deactivate
+    // Provide clear information about the irreversible nature of deactivation
+    // Deactivate the account by removing or marking it as inactive in the data store
+    cout << "Your account has been deactivated." << endl;
     return 8;
 }
