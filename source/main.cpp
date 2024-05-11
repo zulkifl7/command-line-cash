@@ -2,7 +2,7 @@
 #include <windows.h>
 using namespace std;
 
-// -- All Function Declaration Goes here
+//! -- All Function Declaration Goes here
 
 // Login Screen - 1
 int loginScreen(int from);
@@ -34,7 +34,7 @@ int transactionHistory(int from);
 // account deactivation - 8
 int accountDeactivation(int from);
 
-// -- Main Function
+//! -- Main Function
 
 //? main - 0
 int main()
@@ -45,13 +45,14 @@ int main()
     return 0;
 }
 
-// -- All other function initializations goes here
+//! -- All other function initializations goes here
 
 //* Login Screen Compinents
 
 //? Login Screen - 1
 int loginScreen(int from)
 {
+    system("cls"); // clear the screen
     // checking if retured value is 0
     // if it is not 0 telling error message and
     // asking username and password again
@@ -80,6 +81,30 @@ int homeScreen(int from)
         if (primaryOptionHold == 1)
         {
             createNewAccount(2);
+        }
+        else if (primaryOptionHold == 2)
+        {
+            balanceInquiry(2);
+        }
+        else if (primaryOptionHold == 3)
+        {
+            depositeCash(2);
+        }
+        else if (primaryOptionHold == 4)
+        {
+            fundTransfer(2);
+        }
+        else if (primaryOptionHold == 5)
+        {
+            transactionHistory(2);
+        }
+        else if (primaryOptionHold == 6)
+        {
+            accountDeactivation(2);
+        }
+        else if (primaryOptionHold == 7)
+        {
+            loginScreen(2);
         }
         else
         {
