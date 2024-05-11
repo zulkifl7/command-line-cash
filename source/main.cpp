@@ -35,7 +35,9 @@ int primaryOption(); // To display the options in the home screen
 // Login screen components
 string takePassword(); // function to take password without exposing
 int verifyLogin();     // to verify username and password are correct
-int quitContinue();
+int quitContinue();    // function for asking user if they want to continue or quit
+
+// logo print
 
 //! -- Main Function
 
