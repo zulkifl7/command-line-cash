@@ -2,7 +2,7 @@
 #include <windows.h>
 using namespace std;
 
-// -- All Function DEclaration Goes here
+// -- All Function Declaration Goes here
 
 // Login Screen - 1
 int loginScreen(int from);
@@ -15,6 +15,24 @@ int primaryOption(); // To display the options in the home screen
 // Login screen components
 string takePassword(); // function to take password without exposing
 int verifyLogin();     // to verify username and password are correct
+
+// create new account - 3
+int createNewAccount(int from);
+
+// Check Balance - 4
+int balanceInquiry(int from);
+
+// deposite cash - 5
+int depositeCash(int from);
+
+// fund transfer - 6
+int fundTransfer(int from);
+
+// transaction history - 7
+int transactionHistory(int from);
+
+// account deactivation - 8
+int accountDeactivation(int from);
 
 // -- Main Function
 
@@ -52,11 +70,24 @@ int homeScreen(int from)
 {
     system("cls");
     // Primary operation will be repeated until user enters 7 to logout
-    while ((primaryOption()) != 7)
+
+    int primaryOptionHold = 0;
+    do
     {
         // clearing the screen
         system("cls");
-    }
+        primaryOptionHold = primaryOption();
+        if (primaryOptionHold == 1)
+        {
+            createNewAccount(2);
+        }
+        else
+        {
+            cout << "Invalid input!!";
+        }
+
+    } while (primaryOptionHold != 7);
+
     return 0;
 }
 
@@ -127,4 +158,46 @@ int verifyLogin()
     {
         return 1;
     }
+}
+
+// create new account - 3
+int createNewAccount(int from)
+{
+    cout << "create new account" << endl;
+    return 3;
+}
+
+// Check Balance - 4
+int balanceInquiry(int from)
+{
+    cout << "balance inquiry" << endl;
+    return 4;
+}
+
+// deposite cash - 5
+int depositeCash(int from)
+{
+    cout << "cash deposite" << endl;
+    return 5;
+}
+
+// fund transfer - 6
+int fundTransfer(int from)
+{
+    cout << "fund transfer" << endl;
+    return 6;
+}
+
+// transaction history - 7
+int transactionHistory(int from)
+{
+    cout << "transaction history" << endl;
+    return 7;
+}
+
+// account deactivation - 8
+int accountDeactivation(int from)
+{
+    cout << "account deactivation" << endl;
+    return 8;
 }
