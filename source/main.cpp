@@ -53,6 +53,7 @@ int main()
 int loginScreen(int from)
 {
     system("cls"); // clear the screen
+
     // checking if retured value is 0
     // if it is not 0 telling error message and
     // asking username and password again
@@ -63,7 +64,7 @@ int loginScreen(int from)
 
     homeScreen(1);
 
-    return 0;
+    return 1;
 }
 
 //? Home Screen - 2
@@ -113,7 +114,7 @@ int homeScreen(int from)
 
     } while (primaryOptionHold != 7);
 
-    return 0;
+    return 2;
 }
 
 //* Home Screen Components
