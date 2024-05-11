@@ -1,6 +1,7 @@
 {
   "files.associations": {
     "*.py": "python",
-    "iosfwd": "cpp"
+    "iosfwd": "cpp",
+    "limits": "cpp"
   }
 }

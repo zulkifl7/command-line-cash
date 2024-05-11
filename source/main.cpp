@@ -1,5 +1,6 @@
 #include <iostream>
 #include <windows.h>
+#include <limits> // Include for numeric_limits
 using namespace std;
 
 //! -- All Function Declaration Goes here
@@ -70,6 +71,9 @@ int loginScreen(int from)
             while (true)
             {
                 quitCon = quitContinue();
+                // Discard a part of input beign in the buffer including newline
+                // in order to this to work we have to include <limits> header file
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
                 if (quitCon == 0 || quitCon == 1)
                 {
                     break;
@@ -160,7 +164,9 @@ int verifyLogin()
     // fixed username and password
     static string username = "group6", password = "group6@123";
     string gotUsername, gotPassword;
+
     // getting username from user
+
     cout << "Enter username - ";
     getline(cin, gotUsername);
     // getting password from user
