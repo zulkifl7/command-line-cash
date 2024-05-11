@@ -34,13 +34,14 @@ int primaryOption(); // To display the options in the home screen
 // Login screen components
 string takePassword(); // function to take password without exposing
 int verifyLogin();     // to verify username and password are correct
+int quitContinue();
 
 //! -- Main Function
 
 //? main - 0
 int main()
 {
-    system("cls"); // cearing the cmd for a clean look
+    // system("cls"); // cearing the cmd for a clean look
     loginScreen(0);
 
     return 0;
@@ -51,21 +52,76 @@ int main()
 //? Login Screen - 1
 int loginScreen(int from)
 {
-    system("cls"); // clear the screen
+    // system("cls"); // clear the screen
 
     // checking if retured value is 0
     // if it is not 0 telling error message and
     // asking username and password again
-    while (verifyLogin() != 0)
-    {
-        cout << "Your username or Password is incorrect!" << endl;
-    }
+    int verifyLoginHold = 1;
 
-    homeScreen(1);
+    while (verifyLoginHold != 0)
+    {
+        // if the user is rederected to login page from the home screen using logout button
+        // before asking to login, asking him if we want to continue or exit.
+        if (from == 2)
+        {
+            int quitCon = 2;
+
+            while (true)
+            {
+                quitCon = quitContinue();
+                if (quitCon == 0 || quitCon == 1)
+                {
+                    break;
+                }
+            }
+            if (quitCon == 1)
+            {
+                break;
+            }
+        }
+
+        // checking the value returned from the verification and
+        // sending to homescreen or asking username password again
+        verifyLoginHold = verifyLogin();
+        if (verifyLoginHold == 0)
+        {
+            homeScreen(1);
+        }
+        else
+        {
+            cout << "Your username or Password is incorrect!" << endl;
+        }
+        from = 0;
+    }
 
     return 1;
 }
 //* Login screen Components
+// function for asking user if they want to continue or quit
+int quitContinue()
+{
+    // taking character input from user
+    char quitCon;
+    cout << "Do you want to continue? (C - Continue/ Q - Quit) - ";
+    cin >> quitCon;
+    // if user input is c or C return 0
+    if (quitCon == 'c' || quitCon == 'C')
+    {
+        return 0;
+    }
+    // if user input is q or Q return 1
+    else if (quitCon == 'q' || quitCon == 'Q')
+    {
+        return 1;
+    }
+    // anything else will return 2
+    else
+    {
+        return 2;
+    }
+}
+
 string takePassword()
 {
     HANDLE hStdInput = GetStdHandle(STD_INPUT_HANDLE);
@@ -113,10 +169,12 @@ int verifyLogin()
     // verifying if the username and password is correct
     if (username == gotUsername && password == gotPassword)
     {
+        // if usrname and password is correct returning 0
         return 0;
     }
     else
     {
+        // if it is wrong returning 1
         return 1;
     }
 }
