@@ -1,6 +1,7 @@
 #include <iostream>
 #include <windows.h>
-#include <limits> // Include for numeric_limits
+#include <limits>  // Include for numeric_limits
+#include <fstream> // to use file handling
 using namespace std;
 
 //! -- All Function Declaration Goes here
@@ -38,19 +39,41 @@ int verifyLogin();     // to verify username and password are correct
 int quitContinue();    // function for asking user if they want to continue or quit
 
 // logo print
+void logoPrint();
 
 //! -- Main Function
 
 //? main - 0
 int main()
 {
-    // system("cls"); // cearing the cmd for a clean look
+    system("cls"); // cearing the cmd for a clean look
+    logoPrint();
     loginScreen(0);
 
     return 0;
 }
 
 //! -- All other function initializations goes here
+
+void logoPrint()
+{
+    string fileName = "./logo.txt";
+    string line = "";
+    ifstream inFile;
+
+    if (inFile.is_open())
+    {
+        while (getline(inFile, line))
+        {
+            cout << line << endl;
+        }
+    }
+    else
+    {
+        cout << "Welcome to Command-Line Cash!" << endl;
+    }
+    inFile.close();
+}
 
 //? Login Screen - 1
 int loginScreen(int from)
