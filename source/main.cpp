@@ -10,7 +10,6 @@ int loginScreen(int from);
 int homeScreen(int from);
 
 // Home Screen Components
-
 int primaryOption(); // To display the options in the home screen
 
 // Login screen components
