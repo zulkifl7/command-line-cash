@@ -6,15 +6,9 @@ using namespace std;
 
 // Login Screen - 1
 int loginScreen(int from);
+
 // Home Screen - 2
 int homeScreen(int from);
-
-// Home Screen Components
-int primaryOption(); // To display the options in the home screen
-
-// Login screen components
-string takePassword(); // function to take password without exposing
-int verifyLogin();     // to verify username and password are correct
 
 // create new account - 3
 int createNewAccount(int from);
@@ -34,6 +28,13 @@ int transactionHistory(int from);
 // account deactivation - 8
 int accountDeactivation(int from);
 
+// Home Screen Components
+int primaryOption(); // To display the options in the home screen
+
+// Login screen components
+string takePassword(); // function to take password without exposing
+int verifyLogin();     // to verify username and password are correct
+
 //! -- Main Function
 
 //? main - 0
@@ -46,8 +47,6 @@ int main()
 }
 
 //! -- All other function initializations goes here
-
-//* Login Screen Compinents
 
 //? Login Screen - 1
 int loginScreen(int from)
@@ -66,7 +65,61 @@ int loginScreen(int from)
 
     return 1;
 }
+//* Login screen Components
+string takePassword()
+{
+    HANDLE hStdInput = GetStdHandle(STD_INPUT_HANDLE);
+    DWORD mode = 0;
 
+    // Create a restore point Mode
+    // is know 503
+    GetConsoleMode(hStdInput, &mode);
+
+    // Enable echo input
+    // set to 499
+    SetConsoleMode(
+        hStdInput,
+        mode & (~ENABLE_ECHO_INPUT));
+
+    // Take input
+    string ipt;
+    cout << "Enter Password - ";
+    getline(cin, ipt);
+
+    // Otherwise next cout will print
+    // into the same line
+    cout << endl;
+
+    // Restore the mode
+    SetConsoleMode(hStdInput, mode);
+
+    return ipt;
+}
+
+// to take username and password from user and
+// verify if username and password are correct
+
+int verifyLogin()
+{
+    // fixed username and password
+    static string username = "group6", password = "group6@123";
+    string gotUsername, gotPassword;
+    // getting username from user
+    cout << "Enter username - ";
+    getline(cin, gotUsername);
+    // getting password from user
+    gotPassword = takePassword();
+
+    // verifying if the username and password is correct
+    if (username == gotUsername && password == gotPassword)
+    {
+        return 0;
+    }
+    else
+    {
+        return 1;
+    }
+}
 //? Home Screen - 2
 int homeScreen(int from)
 {
@@ -130,98 +183,42 @@ int primaryOption()
     return primaryOptions;
 }
 
-//* Login screen Components
-string takePassword()
-{
-    HANDLE hStdInput = GetStdHandle(STD_INPUT_HANDLE);
-    DWORD mode = 0;
-
-    // Create a restore point Mode
-    // is know 503
-    GetConsoleMode(hStdInput, &mode);
-
-    // Enable echo input
-    // set to 499
-    SetConsoleMode(
-        hStdInput,
-        mode & (~ENABLE_ECHO_INPUT));
-
-    // Take input
-    string ipt;
-    cout << "Enter Password - ";
-    getline(cin, ipt);
-
-    // Otherwise next cout will print
-    // into the same line
-    cout << endl;
-
-    // Restore the mode
-    SetConsoleMode(hStdInput, mode);
-
-    return ipt;
-}
-
-// to take username and password from user and
-// verify if username and password are correct
-
-int verifyLogin()
-{
-    // fixed username and password
-    static string username = "group6", password = "group6@123";
-    string gotUsername, gotPassword;
-    // getting username from user
-    cout << "Enter username - ";
-    getline(cin, gotUsername);
-    // getting password from user
-    gotPassword = takePassword();
-
-    // verifying if the username and password is correct
-    if (username == gotUsername && password == gotPassword)
-    {
-        return 0;
-    }
-    else
-    {
-        return 1;
-    }
-}
-
-// create new account - 3
+//? create new account - 3
 int createNewAccount(int from)
 {
     cout << "create new account" << endl;
     return 3;
 }
 
-// Check Balance - 4
+//? Check Balance - 4
 int balanceInquiry(int from)
 {
     cout << "balance inquiry" << endl;
     return 4;
 }
 
-// deposite cash - 5
+//? deposite cash - 5
 int depositeCash(int from)
 {
     cout << "cash deposite" << endl;
     return 5;
 }
 
-// fund transfer - 6
+//? fund transfer - 6
 int fundTransfer(int from)
 {
     cout << "fund transfer" << endl;
     return 6;
 }
 
-// transaction history - 7
+//? transaction history - 7
 int transactionHistory(int from)
 {
     cout << "transaction history" << endl;
     return 7;
 }
 
-// account deactivation - 8
+//? account deactivation - 8
 int accountDeactivation(int from)
 {
     cout << "account deactivation" << endl;
