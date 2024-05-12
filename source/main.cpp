@@ -623,11 +623,115 @@ int balanceInquiry(int from)
 // Function to allow depositing cash into the account
 int depositeCash(int from)
 {
+    int numOfData = 4;
+    string keys[numOfData] = {"username", "purpose", "ammount", "type"};
+    string values[numOfData];
+    values[3] = "deposite";
+    string username, ConfirmUsername;
+    do
+    {
+        do
+        {
+            // Discard a part of input beign in the buffer including newline
+            // in order to this to work we have to include <limits> header file
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            // Prompt for username and get user input
+            cout << "Enter account username to deposite - ";
+            getline(cin, username);
+            // checking if the username is a valid username before depositing the amount
+            if (usernameExists(username))
+            {
+                break;
+            }
+            else
+            {
+                // if the user name does not exist before asking to enter the username once again
+                // asking user if you want to create a new account
+                char newAcc;
+                cout << "This username does not exist!" << endl;
+                while (true)
+                {
+                    cout << "Do you want to create a new account? (Y/N) - ";
+                    cin >> newAcc;
 
+                    if (newAcc == 'y' || newAcc == 'Y')
+                    {
+                        createNewAccount(5);
+                        break;
+                    }
+                    else if (newAcc == 'n' || newAcc == 'N')
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        cout << "Invalid Input!" << endl;
+                    }
+                }
+            }
+
+        } while (true);
+
+        // Prompt for password confirmation
+        cout << "Confirm your Username -  ";
+        getline(cin, ConfirmUsername);
+        if (ConfirmUsername != username)
+        {
+            cout << "Username doesn't match!!" << endl;
+        }
+        else
+        {
+            values[0] = username;
+        }
+    } while (username != ConfirmUsername); // Repeat until username match
+
+    cout << "Enter the purpose of the deposite - ";
+    getline(cin, values[1]);
+    char confirm;
+    do
+    {
+        // Discard a part of input beign in the buffer including newline
+        // in order to this to work we have to include <limits> header file
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Enter the ammount you want to deposite - ";
+        getline(cin, values[2]);
+
+        cout << "Confirm if the ammount is correct (Y/N) - ";
+        cin >> confirm;
+        float depositeAmount;
+        stringstream buffer(values[2]);
+        buffer >> depositeAmount;
+        if (depositeAmount < 0)
+        {
+            cout << "Invalid deposite ammount!!" << endl;
+        }
+        if (confirm == 'y' || confirm == 'Y')
+        {
+            break;
+        }
+        else if (confirm == 'n' || confirm == 'N')
+        {
+        }
+        else
+        {
+            cout << "Invalid Input!!" << endl;
+        }
+    } while (true);
+
+    ofstream depositeFile("accounts/" + values[0] + ".txt", ios::app);
+
+    if (depositeFile.is_open())
+    {
+        for (int i = 0; i < numOfData; i++)
+        {
+            depositeFile << keys[i] << " - " << values[i] << endl;
+        }
+        depositeFile << endl;
+    }
     // Prompt user for deposit amount
     // Validate deposit amount (e.g., non-negative value)
     // Update account balance in the data store based on deposit amount
-    cout << "Deposited "; // <<  Get deposit amount from user  << " successfully!" << endl;
+    cout << "Cash Deposited!"; // <<  Get deposit amount from user  << " successfully!" << endl;
     return 5;
 }
 
