@@ -1,7 +1,7 @@
 @echo off
 
 rem Compile the C++ code
-g++ -Wall main.cpp -o ..\commandLineCash.exe
+g++ -Wall main.cpp -o commandLineCash.exe
 
 if errorlevel 1 (
   echo Error: Compilation failed!
@@ -9,6 +9,6 @@ if errorlevel 1 (
 )
 
 rem Run the compiled program
-..\commandLineCash.exe  # 
+commandLineCash.exe  # 
 
 echo Program execution complete.

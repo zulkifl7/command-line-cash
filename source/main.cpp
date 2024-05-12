@@ -1,11 +1,23 @@
 #include <iostream>
 #include <windows.h>
-#include <limits>  // Include for numeric_limits
-#include <fstream> // to use file handling
-#include <iomanip> // to manipulate onput and output for a better looking (Ex: tables)
+#include <limits>    // Include for numeric_limits
+#include <fstream>   // to use file handling
+#include <iomanip>   // to manipulate onput and output for a better looking (Ex: tables)
+#include <vector>    // to use vector data structure
+#include <sstream>   // to use flexible string data retreival and searches on data reciewing from the file
+#include <algorithm> // to use remove_if() function
 using namespace std;
 
 //! -- All Function Declaration Goes here
+struct UserData
+{
+    string firstName;
+    string lastName;
+    string dateOfBirth;
+    string nationalIdNumber;
+    string username;
+    string password;
+};
 
 // a sub main function for development and testing perposes
 void subMain();
@@ -18,7 +30,12 @@ int homeScreen(int from);
 
 // create new account - 3
 int createNewAccount(int from);
-
+// create new account components
+bool isStrongPassword(const string &password);
+// Function to check if username exists in the file
+bool usernameExists(const string &username);
+// Read user data from file
+vector<UserData> readUserDataFromFile();
 // Check Balance - 4
 int balanceInquiry(int from);
 
@@ -51,8 +68,16 @@ int primaryOption();  // To taek user input of which option they want to select
 //? main - 0
 int main()
 {
-    subMain();
-
+    // subMain();
+    // Access user data using a loop or by index
+    vector<UserData> users = readUserDataFromFile();
+    for (const UserData &user : users)
+    {
+        cout << "First Name: " << user.firstName << endl;
+        cout << "Last Name: " << user.lastName << endl;
+        // ... and so on for other fields
+        cout << endl;
+    }
     return 0;
 }
 // Using this submain for all the real app callings.
@@ -333,25 +358,223 @@ int createNewAccount(int from)
     // Discard a part of input beign in the buffer including newline
     // in order to this to work we have to include <limits> header file
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
-    for (int i = 0; i < numOfData; i++)
+    // Get user input for each field upto national id number
+    for (int i = 0; i < numOfData - 2; i++)
     {
         cout << "Enter your " << keys[i] << " - ";
         getline(cin, values[i]);
     }
+    // using a temperory username to take username and check if it's already exist
+    string username;
+    cout << "Enter your Username: ";
+    getline(cin, username); // Username index
+    while (true)
+    {
+        // Check if username already exists
+        if (usernameExists(username))
+        {
+            cout << "Username already exists. Please choose another username." << endl;
+            cout << "Enter your Username: ";
+            getline(cin, username); // Username index
+        }
+        else
+        {
+            values[4] = username;
+            break;
+        }
+    }
 
-    // Validate user input to ensure secure password creation
+    // Taking separate input and Validate user input to ensure secure password creation
+    // temporarily storing password for checking
+    string password, confirmPassword;
+    // Loop to get a strong and matching 2 passwords password from the user
+    do
+    {
+        // Prompt for password and get user input
+        cout << "Enter your Password (Must be at least 8 characters and include uppercase, lowercase, digits, and special characters) - ";
+        getline(cin, password);
+
+        // Validate password strength
+        while (!isStrongPassword(password))
+        {
+            cout << "Password is weak. Please ensure it meets the complexity requirements." << endl;
+            // Re-prompt for password if it's weak
+            cout << "Enter your Password (Must be at least 8 characters and include uppercase, lowercase, digits, and special characters) - ";
+            getline(cin, password);
+        }
+        // Prompt for password confirmation
+        cout << "Confirm your Password: ";
+        getline(cin, confirmPassword);
+        if (confirmPassword != password)
+        {
+            cout << "Passwords doesn't match!!" << endl;
+        }
+        else
+        {
+            values[numOfData - 1] = password;
+        }
+    } while (confirmPassword != password); // Repeat until passwords match
+
     // Store user information in a file
-    ofstream file("accounts.txt");
+
+    // Open "accounts.txt" in append mode
+    ofstream file("accounts.txt", ios::app);
+    // Check if file open was successful
+    if (!file.is_open())
+    {
+        // sending an error message
+        cerr << "Error opening file!" << endl;
+        return 1; // Indicate error
+    }
+    // Write user information to the file
     for (int i = 0; i < numOfData; i++)
     {
         file << keys[i] << " - " << values[i] << "\n";
     }
+    // adding a new line to maek keep up a gap betwwen datas
+    file << "\n";
+
     // Handle potential errors during account creation (e.g., username already exists)
     cout << "New account created successfully!" << endl;
+
+    // Close the file
+    file.close();
     return 3;
 }
 
+//* create new account Components
+
+// Function to check password strength
+// making it a constant to prevent modifications
+// passwing the address of password directly inside to
+// use the actual password to prevent errors while copying the string
+bool isStrongPassword(const string &password)
+{
+    int hasUpper = 0;
+    int hasLower = 0;
+    int hasDigit = 0;
+    int hasSpecial = 0;
+
+    // Check for minimum length (adjust as needed)
+    if (password.length() < 8)
+    {
+        return false;
+    }
+
+    // Check for character types
+    for (char c : password) // for every (Char c) in password
+    {
+        if (isupper(c))
+        {
+            hasUpper = 1;
+        }
+        else if (islower(c))
+        {
+            hasLower = 1;
+        }
+        else if (isdigit(c))
+        {
+            hasDigit = 1;
+        }
+        else if (ispunct(c))
+        {
+            hasSpecial = 1;
+        }
+    }
+
+    // Ensure password meets complexity requirements (adjust as needed)
+    return hasUpper && hasLower && hasDigit && hasSpecial;
+}
+// Function to check if username exists in the file
+bool usernameExists(const string &username)
+{
+
+    ifstream file("accounts.txt");
+
+    if (file.is_open())
+    {
+        string line;
+        vector<string> data; // Vector to store data from each line
+
+        while (getline(file, line))
+        {
+            if (line.find("Username") != string ::npos)
+            {
+                string value = line.substr(line.find("-") + 2);
+                if (username == value)
+                {
+                    return true;
+                }
+            }
+        }
+        file.close(); // Close the file even if username not found
+    }
+
+    return false;
+}
+
+// Read user data from file
+vector<UserData> readUserDataFromFile()
+{
+    ifstream file("accounts.txt");
+    vector<UserData> users;
+
+    if (file.is_open())
+    {
+        string line;
+        int lineNumber = 0; // Track line number for potential error handling
+        string temp[6];
+        // Read lines until end of file (including the empty line)
+        UserData user;
+        while (getline(file, line))
+        {
+            lineNumber++;
+            // Skip empty line
+            if (line.empty())
+            {
+                users.push_back(user); // Add user data to the vector
+                continue;
+            }
+            string value = line.substr(line.find("-") + 2);
+            switch (lineNumber % 7)
+            {
+            case 1:
+                user.firstName = value;
+                break;
+            case 2:
+                user.lastName = value;
+                break;
+            case 3:
+                // Handle potential date format issue
+                user.dateOfBirth = value;
+                // You can add validation or correction logic here if needed
+                break;
+            case 4:
+                user.nationalIdNumber = value;
+                break;
+            case 5:
+                user.username = value;
+                break;
+            case 6:
+                user.password = value;
+                break;
+
+            default:
+                // Handle unexpected data (optional)
+                cerr << "Warning: Unexpected data on line " << lineNumber << endl;
+                break;
+            }
+        }
+
+        file.close();
+    }
+    else
+    {
+        cerr << "Error opening file!" << endl;
+    }
+
+    return users;
+}
 //? Check Balance - 4
 // Function to retrieve the current balance associated with the logged-in account
 int balanceInquiry(int from)
