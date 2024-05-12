@@ -488,54 +488,73 @@ bool isStrongPassword(const string &password)
 // Function to check if username exists in the file
 bool usernameExists(const string &username)
 {
-
+    // Open the accounts.txt file in read mode
     ifstream file("accounts.txt");
-
+    // Check if the file opened successfully
     if (file.is_open())
     {
         string line;
-        vector<string> data; // Vector to store data from each line
-
+        // Loop through each line in the file
         while (getline(file, line))
         {
+            // Search for the line containing "Username"
             if (line.find("Username") != string ::npos)
             {
+                // Extract the username value after the "-" delimiter
                 string value = line.substr(line.find("-") + 2);
+                // Compare the provided username with the extracted value
                 if (username == value)
                 {
+                    // Username found, close the file and return true
+                    file.close();
                     return true;
                 }
             }
         }
+        // Username not found in the file, close the file and return false
         file.close(); // Close the file even if username not found
-    }
 
-    return false;
+        return false;
+    }
+    else
+    {
+        // Error opening the file, indicate error and return false
+        cerr << "Error opening file accounts.txt!" << endl;
+        return false;
+    }
 }
 
 // Read user data from file
 vector<UserData> readUserDataFromFile()
 {
+    // Open the "accounts.txt" file in read mode
     ifstream file("accounts.txt");
-    vector<UserData> users;
+    vector<UserData> users; // Stores user data extracted from the file
 
+    // Check if the file opened successfully
     if (file.is_open())
     {
         string line;
         int lineNumber = 0; // Track line number for potential error handling
-        string temp[6];
+
         // Read lines until end of file (including the empty line)
         UserData user;
         while (getline(file, line))
         {
             lineNumber++;
-            // Skip empty line
+            // if there is an empty line one user's data is over
+            // so add that user data to users and reset user
+            // and Skip empty lines between user records
             if (line.empty())
             {
                 users.push_back(user); // Add user data to the vector
-                continue;
+                user = UserData();     // Reset user struch for the next user
+                continue;              // skiping the empty line
             }
-            string value = line.substr(line.find("-") + 2);
+            // Split the line based on the delimiter "-"
+            string value = line.substr(line.find("-") + 2); // Extract data after - sign
+
+            // Assign data to user struct fields based on line number (modulo 7)
             switch (lineNumber % 7)
             {
             case 1:
@@ -565,7 +584,11 @@ vector<UserData> readUserDataFromFile()
                 break;
             }
         }
-
+        // forthe last user record (if not the empty line is missed)
+        if (!user.firstName.empty())
+        {
+            users.push_back(user);
+        }
         file.close();
     }
     else
