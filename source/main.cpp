@@ -6,6 +6,9 @@
 #include <vector>    // to use vector data structure
 #include <sstream>   // to use flexible string data retreival and searches on data reciewing from the file
 #include <algorithm> // to use remove_if() function
+// to make a waiting time in the code
+#include <chrono>
+#include <thread>
 using namespace std;
 
 //! -- All Function Declaration Goes here
@@ -17,6 +20,13 @@ struct UserData
     string nationalIdNumber;
     string username;
     string password;
+};
+struct transactionData
+{
+    string username;
+    string purpose;
+    string ammount;
+    string type;
 };
 
 // a sub main function for development and testing perposes
@@ -36,6 +46,8 @@ bool isStrongPassword(const string &password);
 bool usernameExists(const string &username);
 // Read user data from file
 vector<UserData> readUserDataFromFile();
+// read transactions from file
+vector<transactionData> readTransactionDataFromFile(string username);
 // Check Balance - 4
 int balanceInquiry(int from);
 
@@ -72,6 +84,12 @@ int primaryOption();  // To taek user input of which option they want to select
 int main()
 {
     subMain();
+    // vector<transactionData> transactions = readTransactionDataFromFile("kamal");
+    // for (const transactionData &transaction : transactions)
+    // {
+    //     cout << "type : " << transaction.type << endl;
+    //     cout << "ammount : " << transaction.ammount << endl;
+    // }
     // Access user data using a loop or by index
     // vector<UserData> users = readUserDataFromFile();
     // for (const UserData &user : users)
@@ -294,7 +312,7 @@ int homeScreen(int from)
         {
             accountDeactivation(2);
         }
-        else if (primaryOptionHold == 7)
+        else if (primaryOptionHold == 8)
         {
             loginScreen(2);
         }
@@ -445,7 +463,7 @@ int createNewAccount(int from)
     // adding a new line to maek keep up a gap betwwen datas
     file << "\n";
 
-    // Handle potential errors during account creation (e.g., username already exists)
+    // Handle potential errors during account creation
     cout << "New account created successfully!" << endl;
 
     // Close the file
@@ -575,9 +593,9 @@ vector<UserData> readUserDataFromFile()
                 user.lastName = value;
                 break;
             case 3:
-                // Handle potential date format issue
+
                 user.dateOfBirth = value;
-                // You can add validation or correction logic here if needed
+
                 break;
             case 4:
                 user.nationalIdNumber = value;
@@ -590,7 +608,7 @@ vector<UserData> readUserDataFromFile()
                 break;
 
             default:
-                // Handle unexpected data (optional)
+                // Handle unexpected data
                 cerr << "Warning: Unexpected data on line " << lineNumber << endl;
                 break;
             }
@@ -738,9 +756,222 @@ int depositeCash(int from)
 //? Withdraw cash - 6
 int withdrawCash(int from)
 {
+    int numOfData = 4;
+    string keys[numOfData] = {"username", "purpose", "ammount", "type"};
+    string values[numOfData];
+    values[3] = "withdraw";
+    string username, ConfirmUsername;
+    do
+    {
+        do
+        {
+            // Discard a part of input beign in the buffer including newline
+            // in order to this to work we have to include <limits> header file
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            // Prompt for username and get user input
+            cout << "Enter account username to withdraw - ";
+            getline(cin, username);
+            // checking if the username is a valid username before depositing the amount
+            if (usernameExists(username))
+            {
+                break;
+            }
+            else
+            {
+                // if the user name does not exist before asking to enter the username once again
+                // asking user if you want to create a new account
+                char newAcc;
+                cout << "This username does not exist!" << endl;
+                while (true)
+                {
+                    cout << "Do you want to create a new account? (Y/N) - ";
+                    cin >> newAcc;
+
+                    if (newAcc == 'y' || newAcc == 'Y')
+                    {
+                        createNewAccount(5);
+                        break;
+                    }
+                    else if (newAcc == 'n' || newAcc == 'N')
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        cout << "Invalid Input!" << endl;
+                    }
+                }
+            }
+
+        } while (true);
+
+        // Prompt for password confirmation
+        cout << "Confirm your Username -  ";
+        getline(cin, ConfirmUsername);
+        if (ConfirmUsername != username)
+        {
+            cout << "Username doesn't match!!" << endl;
+        }
+        else
+        {
+            values[0] = username;
+        }
+    } while (username != ConfirmUsername); // Repeat until username match
+
+    cout << "Enter the purpose of the withdraw - ";
+    getline(cin, values[1]);
+    char confirm;
+    float withdrawAmmount;
+    do
+    {
+        // Discard a part of input beign in the buffer including newline
+        // in order to this to work we have to include <limits> header file
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Enter the ammount you want to withdraw - ";
+        getline(cin, values[2]);
+
+        cout << "Confirm if the ammount is correct (Y/N) - ";
+        cin >> confirm;
+        stringstream buffer(values[2]);
+        buffer >> withdrawAmmount;
+        if (withdrawAmmount < 0)
+        {
+            cout << "Invalid withdraw ammount!!" << endl;
+        }
+        if (confirm == 'y' || confirm == 'Y')
+        {
+            break;
+        }
+        else if (confirm == 'n' || confirm == 'N')
+        {
+        }
+        else
+        {
+            cout << "Invalid Input!!" << endl;
+        }
+    } while (true);
+    ifstream withdrawAmountCheck("accounts/" + values[0] + ".txt", ios::app);
+    string line;
+    // checking if the account balance is greater than the withdraw ammount
+
+    float totalWithdraw = 0, totalDeposite = 0, floatValue;
+    ;
+
+    vector<transactionData> transactions = readTransactionDataFromFile(values[0]);
+    for (const transactionData &transaction : transactions)
+    {
+        stringstream hold(transaction.ammount);
+        hold >> floatValue;
+        if (transaction.type == "withdraw")
+        {
+            totalWithdraw = totalWithdraw + floatValue;
+        }
+        else if (transaction.type == "deposite")
+        {
+            totalDeposite = totalDeposite + floatValue;
+        }
+    }
+
+    if ((totalDeposite - totalWithdraw) > withdrawAmmount)
+    {
+
+        ofstream withdrawFile("accounts/" + values[0] + ".txt", ios::app);
+        if (withdrawFile.is_open())
+        {
+
+            for (int i = 0; i < numOfData; i++)
+            {
+                withdrawFile << keys[i] << " - " << values[i] << endl;
+            }
+            withdrawFile << endl;
+        }
+
+        // Prompt user for deposit amount
+        // Validate deposit amount (e.g., non-negative value)
+        // Update account balance in the data store based on deposit amount
+        cout << "Cash Withdrawed!"; // <<  Get deposit amount from user  << " successfully!" << endl;
+    }
+    else
+    {
+
+        cout << "Insufficient Balance!!" << endl;
+        // Create a duration object representing 5 seconds
+        chrono::seconds waitDuration(5);
+
+        // Use this_thread::sleep_for to wait for the specified duration
+        this_thread::sleep_for(waitDuration);
+        homeScreen(6);
+    }
     return 6;
 }
+vector<transactionData> readTransactionDataFromFile(string username)
+{
+    ifstream file("accounts/" + username + ".txt");
+    // Open the "username.txt" file in read mode
 
+    vector<transactionData> transactions; // Stores transaction data extracted from the file
+
+    // Check if the file opened successfully
+    if (file.is_open())
+    {
+        string line;
+        int lineNumber = 0; // Track line number for potential error handling
+
+        // Read lines until end of file (including the empty line)
+        transactionData transaction;
+        while (getline(file, line))
+        {
+            lineNumber++;
+            // if there is an empty line one transaction's data data is over
+            // so add that user data to datas and reset data
+            // and Skip empty lines between user records
+            if (line.empty())
+            {
+                transactions.push_back(transaction); // Add transaction data to the vector
+                transaction = transactionData();     // Reset transaction struct for the next transaction
+                continue;                            // skiping the empty line
+            }
+            // Split the line based on the delimiter "-"
+            string value = line.substr(line.find("-") + 2); // Extract data after - sign
+
+            // Assign data to transaction struct fields based on line number (modulo 7)
+            switch (lineNumber % 5)
+            {
+            case 1:
+                transaction.username = value;
+                break;
+            case 2:
+                transaction.purpose = value;
+                break;
+            case 3:
+
+                transaction.ammount = value;
+
+                break;
+            case 4:
+                transaction.type = value;
+                break;
+
+            default:
+                // Handle unexpected data
+                cerr << "Warning: Unexpected data on line " << lineNumber << endl;
+                break;
+            }
+        }
+        // forthe last user record (if not the empty line is missed)
+        if (!transaction.username.empty())
+        {
+            transactions.push_back(transaction);
+        }
+        file.close();
+    }
+    else
+    {
+        cerr << "Error opening file!" << endl;
+    }
+
+    return transactions;
+}
 //? fund transfer - 7
 // Function to enable transferring funds to another account
 int fundTransfer(int from)
