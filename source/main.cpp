@@ -42,13 +42,16 @@ int balanceInquiry(int from);
 // deposite cash - 5
 int depositeCash(int from);
 
-// fund transfer - 6
+// withdraw cash - 6
+int withdrawCash(int from);
+
+// fund transfer - 7
 int fundTransfer(int from);
 
-// transaction history - 7
+// transaction history - 8
 int transactionHistory(int from);
 
-// account deactivation - 8
+// account deactivation - 9
 int accountDeactivation(int from);
 
 // Login screen components
@@ -68,16 +71,16 @@ int primaryOption();  // To taek user input of which option they want to select
 //? main - 0
 int main()
 {
-    // subMain();
+    subMain();
     // Access user data using a loop or by index
-    vector<UserData> users = readUserDataFromFile();
-    for (const UserData &user : users)
-    {
-        cout << "First Name: " << user.firstName << endl;
-        cout << "Last Name: " << user.lastName << endl;
-        // ... and so on for other fields
-        cout << endl;
-    }
+    // vector<UserData> users = readUserDataFromFile();
+    // for (const UserData &user : users)
+    // {
+    //     cout << "First Name: " << user.firstName << endl;
+    //     cout << "Last Name: " << user.lastName << endl;
+    //     // ... and so on for other fields
+    //     cout << endl;
+    // }
     return 0;
 }
 // Using this submain for all the real app callings.
@@ -277,13 +280,17 @@ int homeScreen(int from)
         }
         else if (primaryOptionHold == 4)
         {
-            fundTransfer(2);
+            withdrawCash(2);
         }
         else if (primaryOptionHold == 5)
         {
-            transactionHistory(2);
+            fundTransfer(2);
         }
         else if (primaryOptionHold == 6)
+        {
+            transactionHistory(2);
+        }
+        else if (primaryOptionHold == 7)
         {
             accountDeactivation(2);
         }
@@ -296,7 +303,7 @@ int homeScreen(int from)
             cout << "Invalid input!!";
         }
 
-    } while (primaryOptionHold != 7);
+    } while (primaryOptionHold != 8);
 
     return 2;
 }
@@ -317,11 +324,12 @@ int primaryOption()
 void optionDisplay()
 {
     // number of options
-    int numOfOpt = 7; // using a variable for easy future updates if needed
+    int numOfOpt = 8; // using a variable for easy future updates if needed
     // using an array so i could use a loop for displaying the options
     string options[numOfOpt] = {"Create new Account",
                                 "Balance Inquiry",
                                 "Cash Deposite",
+                                "Cash Withdraw",
                                 "Fund Transfer",
                                 "Transaction History",
                                 "Account Deactivation",
@@ -419,6 +427,9 @@ int createNewAccount(int from)
 
     // Open "accounts.txt" in append mode
     ofstream file("accounts.txt", ios::app);
+    // creating a new file for user to store his transaction
+    ofstream userTransactionFile("accounts/" + values[4] + ".txt");
+    userTransactionFile.close();
     // Check if file open was successful
     if (!file.is_open())
     {
@@ -612,6 +623,7 @@ int balanceInquiry(int from)
 // Function to allow depositing cash into the account
 int depositeCash(int from)
 {
+
     // Prompt user for deposit amount
     // Validate deposit amount (e.g., non-negative value)
     // Update account balance in the data store based on deposit amount
@@ -619,7 +631,13 @@ int depositeCash(int from)
     return 5;
 }
 
-//? fund transfer - 6
+//? Withdraw cash - 6
+int withdrawCash(int from)
+{
+    return 6;
+}
+
+//? fund transfer - 7
 // Function to enable transferring funds to another account
 int fundTransfer(int from)
 {
@@ -629,10 +647,10 @@ int fundTransfer(int from)
     // Validate transfer amount (e.g., sufficient balance)
     // Update account balances (sender and recipient) in the data store
     cout << "Successfully transferred "; // << /* Get transfer amount from user */ << " to recipient." << endl;
-    return 6;
+    return 7;
 }
 
-//? transaction history - 7
+//? transaction history - 8
 // Function to display past transactions associated with the account
 int transactionHistory(int from)
 {
@@ -641,10 +659,10 @@ int transactionHistory(int from)
     // Allow user to navigate through transaction history (optional)
     cout << "Displaying transaction history..." << endl;
     // Implement logic to display transactions
-    return 7;
+    return 8;
 }
 
-//? account deactivation - 8
+//? account deactivation - 9
 // Function to permanently deactivate the logged-in user account
 int accountDeactivation(int from)
 {
@@ -652,5 +670,5 @@ int accountDeactivation(int from)
     // Provide clear information about the irreversible nature of deactivation
     // Deactivate the account by removing or marking it as inactive in the data store
     cout << "Your account has been deactivated." << endl;
-    return 8;
+    return 9;
 }
