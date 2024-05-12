@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <limits>  // Include for numeric_limits
 #include <fstream> // to use file handling
+#include <iomanip> // to manipulate onput and output for a better looking (Ex: tables)
 using namespace std;
 
 //! -- All Function Declaration Goes here
@@ -30,9 +31,6 @@ int transactionHistory(int from);
 // account deactivation - 8
 int accountDeactivation(int from);
 
-// Home Screen Components
-int primaryOption(); // To display the options in the home screen
-
 // Login screen components
 string takePassword(); // function to take password without exposing
 int verifyLogin();     // to verify username and password are correct
@@ -41,16 +39,27 @@ int quitContinue();    // function for asking user if they want to continue or q
 // logo print
 void logoPrint();
 
+// Home Screen Components
+void optionDisplay(); // To display the options in the home screen
+int primaryOption();  // To taek user input of which option they want to select
+
 //! -- Main Function
 
 //? main - 0
 int main()
 {
+
+    return 0;
+}
+// Using this submain for all the real app callings.
+// so in the developing phase we can just call this function if we want to
+// run the actual program and without calling this we can just call other functions to test
+// a perticular part in the code
+void subMain()
+{
     system("cls"); // cearing the cmd for a clean look
     logoPrint();
     loginScreen(0);
-
-    return 0;
 }
 
 //! -- All other function initializations goes here
@@ -221,6 +230,7 @@ int homeScreen(int from)
         // clearing the screen
         system("cls");
         primaryOptionHold = primaryOption();
+        // calling curespoding function acording to the user's call
         if (primaryOptionHold == 1)
         {
             createNewAccount(2);
@@ -270,6 +280,22 @@ int primaryOption()
     cin >> primaryOptions;
 
     return primaryOptions;
+}
+
+void optionDisplay()
+{
+    // number of options
+    int numOfOpt = 7; // using a variable for easy future updates if needed
+    // using an array so i could use a loop for displaying the options
+    string options[numOfOpt] = {"Create new Account",
+                                "Balance Inquiry",
+                                "Cash Deposite",
+                                "Fund Transfer",
+                                "Account Deactivation",
+                                "Logout"};
+    // using <iomanip> input and output manipulation builtin library for a table like output
+    cout << setw(11) << left << "Option Number" << setw(5) << right << "Option Description"
+         << endl;
 }
 
 //? create new account - 3
