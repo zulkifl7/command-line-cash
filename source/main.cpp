@@ -7,6 +7,9 @@ using namespace std;
 
 //! -- All Function Declaration Goes here
 
+// a sub main function for development and testing perposes
+void subMain();
+
 // Login Screen - 1
 int loginScreen(int from);
 
@@ -48,6 +51,7 @@ int primaryOption();  // To taek user input of which option they want to select
 //? main - 0
 int main()
 {
+    subMain();
 
     return 0;
 }
@@ -229,6 +233,9 @@ int homeScreen(int from)
     {
         // clearing the screen
         system("cls");
+        // to diplay the avalable options
+        optionDisplay();
+        cout << endl;
         primaryOptionHold = primaryOption();
         // calling curespoding function acording to the user's call
         if (primaryOptionHold == 1)
@@ -291,11 +298,24 @@ void optionDisplay()
                                 "Balance Inquiry",
                                 "Cash Deposite",
                                 "Fund Transfer",
+                                "Transaction History",
                                 "Account Deactivation",
                                 "Logout"};
     // using <iomanip> input and output manipulation builtin library for a table like output
-    cout << setw(11) << left << "Option Number" << setw(5) << right << "Option Description"
-         << endl;
+    // cout << setw(20) << left << "Option Number" << setw(50) << left << "Option Description" << endl;
+    cout << setw(2) << left << "|" << setw(15) << right << "--------------" << setw(2) << left << "|" << setw(23) << left << "--------------"
+         << setw(40) << "|" << endl;
+    cout << setw(2) << left << "|" << setw(15) << right << "Option Number" << setw(2) << left << "|" << setw(23) << left << "Options"
+         << setw(40) << "|" << endl;
+    cout << setw(2) << left << "|" << setw(15) << right << "--------------" << setw(2) << left << "|" << setw(23) << left << "--------------"
+         << setw(40) << "|" << endl;
+    for (int i = 0; i < numOfOpt; i++)
+    {
+        cout << setw(2) << left << "|" << setw(15) << right << i + 1 << setw(2) << left << "|" << setw(23) << left << options[i]
+             << setw(2) << left << "|" << endl;
+    }
+    cout << setw(2) << left << "|" << setw(15) << right << "--------------" << setw(2) << left << "|" << setw(23) << left << "--------------"
+         << setw(40) << "|" << endl;
 }
 
 //? create new account - 3
@@ -306,7 +326,7 @@ int createNewAccount(int from)
     // firstName - 0, lastName - 1, dateOfBirth - 2, nationalIdNumber - 3, userName - 4, password - 5
     int numOfData = 6; // using a variable in case if we need another field we can just incriment one and add that field to keys and work
     // To use a for loop to take the inputs
-    string keys[numOfData] = {"First Name", "Last Name", "Date Of Birth", "National Id Number", "Username", "Password"};
+    string keys[numOfData] = {"First Name", "Last Name", "Date Of Birth [yyy-mm-dd]", "National Id Number", "Username", "Password"};
     // to store the values user have entered
     string values[numOfData];
 
