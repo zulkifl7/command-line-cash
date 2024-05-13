@@ -88,23 +88,9 @@ int primaryOption();  // To taek user input of which option they want to select
 //? main - 0
 int main()
 {
-    // transactionHistory(0);
+
     subMain();
-    // vector<transactionData> transactions = readTransactionDataFromFile("kamal");
-    // for (const transactionData &transaction : transactions)
-    // {
-    //     cout << "type : " << transaction.type << endl;
-    //     cout << "ammount : " << transaction.ammount << endl;
-    // }
-    // Access user data using a loop or by index
-    // vector<UserData> users = readUserDataFromFile();
-    // for (const UserData &user : users)
-    // {
-    //     cout << "First Name: " << user.firstName << endl;
-    //     cout << "Last Name: " << user.lastName << endl;
-    //     // ... and so on for other fields
-    //     cout << endl;
-    // }
+
     return 0;
 }
 // Using this submain for all the real app callings.
@@ -1128,7 +1114,7 @@ int fundTransfer(int from)
     cout << "Enter the purpose of the transaction- ";
     getline(cin, values[1]);
     char confirm;
-    float withdrawAmmount;
+    float transferAmmount;
     do
     {
         // Discard a part of input beign in the buffer including newline
@@ -1140,8 +1126,8 @@ int fundTransfer(int from)
         cout << "Confirm if the ammount is correct (Y/N) - ";
         cin >> confirm;
         stringstream buffer(values[2]);
-        buffer >> withdrawAmmount;
-        if (withdrawAmmount < 0)
+        buffer >> transferAmmount;
+        if (transferAmmount < 0)
         {
             cout << "Invalid transfer ammount!!" << endl;
         }
@@ -1161,7 +1147,7 @@ int fundTransfer(int from)
     string line;
     // checking if the account balance is greater than the withdraw ammount
 
-    if (balance(values[0]) > withdrawAmmount)
+    if (balance(values[0]) > transferAmmount)
     {
         // Write Transaction Data (if sufficient balance)
         ofstream withdrawFile("accounts/" + values[0] + ".txt", ios::app);
