@@ -835,25 +835,7 @@ int withdrawCash(int from)
     string line;
     // checking if the account balance is greater than the withdraw ammount
 
-    float totalWithdraw = 0, totalDeposite = 0, floatValue;
-    ;
-
-    vector<transactionData> transactions = readTransactionDataFromFile(values[0]);
-    for (const transactionData &transaction : transactions)
-    {
-        stringstream hold(transaction.ammount);
-        hold >> floatValue;
-        if (transaction.type == "withdraw")
-        {
-            totalWithdraw = totalWithdraw + floatValue;
-        }
-        else if (transaction.type == "deposite")
-        {
-            totalDeposite = totalDeposite + floatValue;
-        }
-    }
-
-    if ((totalDeposite - totalWithdraw) > withdrawAmmount)
+    if (balance(values[0]) > withdrawAmmount)
     {
 
         ofstream withdrawFile("accounts/" + values[0] + ".txt", ios::app);
@@ -876,11 +858,10 @@ int withdrawCash(int from)
     {
 
         cout << "Insufficient Balance!!" << endl;
-        // Create a duration object representing 5 seconds
-        chrono::seconds waitDuration(5);
-
-        // Use this_thread::sleep_for to wait for the specified duration
-        this_thread::sleep_for(waitDuration);
+        cout << "Press Enter to continue...";
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Press Enter to continue...";
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         homeScreen(6);
     }
     return 6;
