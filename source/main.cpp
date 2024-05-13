@@ -6,9 +6,7 @@
 #include <vector>    // to use vector data structure
 #include <sstream>   // to use flexible string data retreival and searches on data reciewing from the file
 #include <algorithm> // to use remove_if() function
-// to make a waiting time in the code
-#include <chrono>
-#include <thread>
+#include <ctime>     // To get current time
 using namespace std;
 
 //! -- All Function Declaration Goes here
@@ -27,6 +25,8 @@ struct transactionData
     string purpose;
     string ammount;
     string type;
+    string who;
+    string dateTime;
 };
 
 // a sub main function for development and testing perposes
@@ -53,6 +53,9 @@ int balanceInquiry(int from); // gives the output for balance inquiry
 // returns the balance of a user
 float balance(string username);
 // deposite cash - 5
+
+// to get the current time
+string currentTime();
 int depositeCash(int from);
 // check if username is valid and ask the username 2 times for confirmation
 string confirmTransactionUsername(string type);
@@ -658,11 +661,15 @@ float balance(string username)
     {
         stringstream hold(transaction.ammount);
         hold >> floatValue;
-        if (transaction.type == "withdraw")
+        // if the transaction type is withdraw it is a withdraw
+        // if the transaction type is to it is a fund transfer to another account
+        if (transaction.type == "withdraw" || transaction.type == "to")
         {
             totalWithdraw = totalWithdraw + floatValue;
         }
-        else if (transaction.type == "deposite")
+        // if the transaction type is deposite it is a deposite
+        // if the transaction type is from it is a fund reciewd from another account
+        else if (transaction.type == "deposite" || transaction.type == "from")
         {
             totalDeposite = totalDeposite + floatValue;
         }
@@ -731,14 +738,39 @@ string confirmTransactionUsername(string type)
     } while (username != ConfirmUsername); // Repeat until username match
     return username;
 }
+string currentTime()
+{
+    time_t now = time(0);            // Get current time in seconds since epoch
+    tm *localTime = localtime(&now); // Convert to local time structure
+
+    int year = localTime->tm_year + 1900; // Adjust for base year
+    int month = localTime->tm_mon + 1;    // Months are 0-indexed
+    int day = localTime->tm_mday;
+    int hour = localTime->tm_hour;
+    int minute = localTime->tm_min;
+    int second = localTime->tm_sec;
+
+    // Format the date and time as desired
+    string formattedDateTime = to_string(year) + "-" +
+                               to_string(month) + "-" +
+                               to_string(day) + " " +
+                               to_string(hour) + ":" +
+                               to_string(minute) + ":" +
+                               to_string(second);
+
+    return formattedDateTime;
+}
 //? deposite cash - 5
 // Function to allow depositing cash into the account
 int depositeCash(int from)
 {
-    int numOfData = 4;
-    string keys[numOfData] = {"username", "purpose", "ammount", "type"};
+    int numOfData = 6;
+    string keys[numOfData] = {"username", "purpose", "ammount", "type", "who", "dateTime"};
     string values[numOfData];
     values[3] = "deposite";
+    values[4] = "none";
+    // updating time of deposite
+    values[5] = currentTime();
     values[0] = confirmTransactionUsername(values[3]);
     cout << "Enter the purpose of the deposite - ";
     getline(cin, values[1]);
@@ -793,10 +825,12 @@ int depositeCash(int from)
 //? Withdraw cash - 6
 int withdrawCash(int from)
 {
-    int numOfData = 4;
-    string keys[numOfData] = {"username", "purpose", "ammount", "type"};
+    int numOfData = 6;
+    string keys[numOfData] = {"username", "purpose", "ammount", "type", "who", "dateTime"};
     string values[numOfData];
     values[3] = "withdraw";
+    values[4] = "none";
+    values[5] = currentTime();
     values[0] = confirmTransactionUsername(values[3]);
 
     cout << "Enter the purpose of the withdraw - ";
@@ -897,7 +931,7 @@ vector<transactionData> readTransactionDataFromFile(string username)
             string value = line.substr(line.find("-") + 2); // Extract data after - sign
 
             // Assign data to transaction struct fields based on line number (modulo 7)
-            switch (lineNumber % 5)
+            switch (lineNumber % 7)
             {
             case 1:
                 transaction.username = value;
@@ -913,7 +947,12 @@ vector<transactionData> readTransactionDataFromFile(string username)
             case 4:
                 transaction.type = value;
                 break;
-
+            case 5:
+                transaction.who = value;
+                break;
+            case 6:
+                transaction.dateTime = value;
+                break;
             default:
                 // Handle unexpected data
                 cerr << "Warning: Unexpected data on line " << lineNumber << endl;
