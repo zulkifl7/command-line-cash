@@ -49,11 +49,13 @@ vector<UserData> readUserDataFromFile();
 // read transactions from file
 vector<transactionData> readTransactionDataFromFile(string username);
 // Check Balance - 4
-int balanceInquiry(int from);
-
+int balanceInquiry(int from); // gives the output for balance inquiry
+// returns the balance of a user
+float balance(string username);
 // deposite cash - 5
 int depositeCash(int from);
-
+// check if username is valid and ask the username 2 times for confirmation
+string confirmTransactionUsername(string type);
 // withdraw cash - 6
 int withdrawCash(int from);
 
@@ -631,20 +633,45 @@ vector<UserData> readUserDataFromFile()
 // Function to retrieve the current balance associated with the logged-in account
 int balanceInquiry(int from)
 {
-    // Access account data based on logged-in user credentials
+    // Access account data based on username credentials
+    string type = "Balance Inquiry";
+
+    string username = confirmTransactionUsername(type);
+    float balanceAmmount;
+
+    ;
+
+    balanceAmmount = balance(username);
     // Retrieve and display the current balance
-    cout << "Your current balance is: "; // << /* Get balance from data store */ << endl;
+    cout << "Your current balance is: " << balanceAmmount << endl; // << /* Get balance from data store */ << endl;
+
+    cout << "Press Enter to continue...";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
     return 4;
 }
-
-//? deposite cash - 5
-// Function to allow depositing cash into the account
-int depositeCash(int from)
+float balance(string username)
 {
-    int numOfData = 4;
-    string keys[numOfData] = {"username", "purpose", "ammount", "type"};
-    string values[numOfData];
-    values[3] = "deposite";
+    float totalWithdraw = 0, totalDeposite = 0, floatValue;
+    vector<transactionData> transactions = readTransactionDataFromFile(username);
+    for (const transactionData &transaction : transactions)
+    {
+        stringstream hold(transaction.ammount);
+        hold >> floatValue;
+        if (transaction.type == "withdraw")
+        {
+            totalWithdraw = totalWithdraw + floatValue;
+        }
+        else if (transaction.type == "deposite")
+        {
+            totalDeposite = totalDeposite + floatValue;
+        }
+    }
+    return (totalDeposite - totalWithdraw);
+}
+// to make sure the username enterd are same
+string confirmTransactionUsername(string type)
+{
     string username, ConfirmUsername;
     do
     {
@@ -654,9 +681,9 @@ int depositeCash(int from)
             // in order to this to work we have to include <limits> header file
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
             // Prompt for username and get user input
-            cout << "Enter account username to deposite - ";
+            cout << "Enter account username to " << type << " - ";
             getline(cin, username);
-            // checking if the username is a valid username before depositing the amount
+            // checking if the username is a valid username before depositing or transfering the amount
             if (usernameExists(username))
             {
                 break;
@@ -690,7 +717,7 @@ int depositeCash(int from)
 
         } while (true);
 
-        // Prompt for password confirmation
+        // Prompt for username confirmation
         cout << "Confirm your Username -  ";
         getline(cin, ConfirmUsername);
         if (ConfirmUsername != username)
@@ -699,10 +726,20 @@ int depositeCash(int from)
         }
         else
         {
-            values[0] = username;
+            return username;
         }
     } while (username != ConfirmUsername); // Repeat until username match
-
+    return username;
+}
+//? deposite cash - 5
+// Function to allow depositing cash into the account
+int depositeCash(int from)
+{
+    int numOfData = 4;
+    string keys[numOfData] = {"username", "purpose", "ammount", "type"};
+    string values[numOfData];
+    values[3] = "deposite";
+    values[0] = confirmTransactionUsername(values[3]);
     cout << "Enter the purpose of the deposite - ";
     getline(cin, values[1]);
     char confirm;
@@ -760,63 +797,7 @@ int withdrawCash(int from)
     string keys[numOfData] = {"username", "purpose", "ammount", "type"};
     string values[numOfData];
     values[3] = "withdraw";
-    string username, ConfirmUsername;
-    do
-    {
-        do
-        {
-            // Discard a part of input beign in the buffer including newline
-            // in order to this to work we have to include <limits> header file
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            // Prompt for username and get user input
-            cout << "Enter account username to withdraw - ";
-            getline(cin, username);
-            // checking if the username is a valid username before depositing the amount
-            if (usernameExists(username))
-            {
-                break;
-            }
-            else
-            {
-                // if the user name does not exist before asking to enter the username once again
-                // asking user if you want to create a new account
-                char newAcc;
-                cout << "This username does not exist!" << endl;
-                while (true)
-                {
-                    cout << "Do you want to create a new account? (Y/N) - ";
-                    cin >> newAcc;
-
-                    if (newAcc == 'y' || newAcc == 'Y')
-                    {
-                        createNewAccount(5);
-                        break;
-                    }
-                    else if (newAcc == 'n' || newAcc == 'N')
-                    {
-                        break;
-                    }
-                    else
-                    {
-                        cout << "Invalid Input!" << endl;
-                    }
-                }
-            }
-
-        } while (true);
-
-        // Prompt for password confirmation
-        cout << "Confirm your Username -  ";
-        getline(cin, ConfirmUsername);
-        if (ConfirmUsername != username)
-        {
-            cout << "Username doesn't match!!" << endl;
-        }
-        else
-        {
-            values[0] = username;
-        }
-    } while (username != ConfirmUsername); // Repeat until username match
+    values[0] = confirmTransactionUsername(values[3]);
 
     cout << "Enter the purpose of the withdraw - ";
     getline(cin, values[1]);
