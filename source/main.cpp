@@ -1090,7 +1090,26 @@ vector<transactionData> readTransactionDataFromFile(string username)
     return transactions;
 }
 //? fund transfer - 7
-// Function to enable transferring funds to another account
+
+/**
+ * Handles the process of transferring funds between two user accounts.
+ *
+ * This function prompts the user for the following information:
+ *  - Username of the owner's account (confirmed through `confirmTransactionUsername`).
+ *  - Username of the recipient (confirmed through `confirmTransactionUsername`).
+ *  - Transfer purpose (entered by the user).
+ *  - Transfer amount (validated for non-negative values).
+ *
+ * It then checks the owner's account balance using `balance` to ensure sufficient funds.
+ * If the balance is sufficient, the transaction details are written to two files:
+ *  - Owner's account file: Transaction type "to" indicates a transfer out.
+ *  - Recipient's account file: Transaction type "from" indicates a transfer in.
+ *
+ * The function displays a success message with the transfer amount and recipient.
+ *
+ * @param from (unused parameter in this implementation).
+ * @return An integer value (purpose unclear in the provided code).
+ */
 int fundTransfer(int from)
 {
     int numOfData = 6;
@@ -1168,11 +1187,10 @@ int fundTransfer(int from)
             recieveFile << endl;
         }
 
-        // Prompt user for deposit amount
-        // Validate deposit amount (e.g., non-negative value)
-        // Update account balance in the data store based on deposit amount
         cout << values[2] << " LKR transfered to " << values[4]
-             << "from" << values[0] << "'s Account" << endl; // <<  Get deposit amount from user  << " successfully!" << endl;
+             << " from " << values[0] << "'s Account" << endl; // <<  Get deposit amount from user  << " successfully!" << endl;
+        cout << "Press Enter to continue...";
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
         cout << "Press Enter to continue...";
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
@@ -1185,13 +1203,6 @@ int fundTransfer(int from)
         cout << "Press Enter to continue...";
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
         homeScreen(6);
-
-        // Prompt user for recipient account information - username
-        // Validate recipient information
-        // Prompt user for transfer amount
-        // Validate transfer amount (e.g., sufficient balance)
-        // Update account balances (sender and recipient) in the data store
-        cout << "Successfully transferred "; // << /* Get transfer amount from user */ << " to recipient." << endl;
     }
     return 7;
 }
