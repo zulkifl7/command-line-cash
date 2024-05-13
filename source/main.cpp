@@ -88,6 +88,7 @@ int primaryOption();  // To taek user input of which option they want to select
 //? main - 0
 int main()
 {
+    // transactionHistory(0);
     subMain();
     // vector<transactionData> transactions = readTransactionDataFromFile("kamal");
     // for (const transactionData &transaction : transactions)
@@ -1217,11 +1218,111 @@ int fundTransfer(int from)
 // Function to display past transactions associated with the account
 int transactionHistory(int from)
 {
-    // Access transaction history data based on logged-in user credentials
-    // Display a formatted list of past transactions (e.g., date, amount, type)
+    system("cls"); // cearing the cmd for a clean look
+    string type = "Transaction History";
+    string username = confirmTransactionUsername(type);
+    float totalDeposites = 0, totalWithdraws = 0, floatValue;
+    vector<transactionData> transactions = readTransactionDataFromFile(username);
+
+    string header1 = "  Date & Time  ";
+    string header2 = "  Description  ";
+    string header3 = "  Credit  ";
+    string header4 = "  Debit  ";
+    system("cls"); // cearing the cmd for a clean look
+    cout << endl;
+    cout << "Account data of " << username << endl;
+    cout << endl;
+    // table starting
+    cout << string(header1.length(), '-') << string(header2.length(), '-')
+         << string(header3.length(), '-') << string(header4.length() + 29, '-') << endl;
+    // heading row
+    cout << setw(2) << left << "|" << setw(20) << left << header1
+         << setw(2) << left << "|" << setw(25) << left << header2
+         << setw(2) << left << "|" << setw(10) << right << header3
+         << setw(1) << right << " "
+         << setw(4) << left << "|" << setw(10) << right << header4
+         << setw(2) << "|" << endl;
+    // line after headeing
+    cout << string(header1.length(), '-') << string(header2.length(), '-')
+         << string(header3.length(), '-') << string(header4.length() + 29, '-') << endl;
+    // to access all other data
+    for (const transactionData &transaction : transactions)
+    {
+        stringstream hold(transaction.ammount);
+        hold >> floatValue;
+        string outputs[3];
+        if (transaction.type == "withdraw")
+        {
+            totalWithdraws = totalWithdraws + floatValue;
+            outputs[0] = "Withdraw";
+            outputs[1] = "-";
+            outputs[2] = "( " + transaction.ammount + " )";
+        }
+        else if (transaction.type == "deposite")
+        {
+            totalDeposites = totalDeposites + floatValue;
+            outputs[0] = "Deposite";
+            outputs[1] = transaction.ammount;
+            outputs[2] = "-";
+        }
+        else if (transaction.type == "to")
+        {
+            totalWithdraws = totalWithdraws + floatValue;
+            outputs[0] = "Transaction to " + transaction.who;
+            outputs[1] = "-";
+            outputs[2] = "( " + transaction.ammount + " )";
+        }
+        else if (transaction.type == "from")
+        {
+            totalDeposites = totalDeposites + floatValue;
+            outputs[0] = "Recieved from " + transaction.who;
+            outputs[1] = transaction.ammount;
+            outputs[2] = "-";
+        }
+        // to display all data
+        cout << setw(2) << left << "|" << setw(20) << left << transaction.dateTime
+             << setw(2) << left << "|" << setw(25) << left << outputs[0]
+             << setw(2) << left << "|" << setw(10) << right << outputs[1]
+             << setw(1) << right << " "
+             << setw(4) << left << "|" << setw(10) << right << outputs[2]
+             << setw(2) << "|" << endl;
+    }
+    // line after all data
+    cout << string(header1.length(), '-') << string(header2.length(), '-')
+         << string(header3.length(), '-') << string(header4.length() + 29, '-') << endl;
+    // to diplay total Deposites
+    cout << setw(2) << left << "|" << setw(20) << left << currentTime()
+         << setw(2) << left << "|" << setw(25) << left << "Total Deposites"
+         << setw(2) << left << "|" << setw(10) << right << totalDeposites
+         << setw(1) << right << " "
+         << setw(4) << left << "|" << setw(10) << right << "-"
+         << setw(2) << "|" << endl;
+    // to display total Withdraws
+    string totalWithStr;
+    stringstream buffer;
+    buffer << totalWithdraws;
+    totalWithStr = buffer.str();
+    cout << setw(2) << left << "|" << setw(20) << left << currentTime()
+         << setw(2) << left << "|" << setw(25) << left << "Total Withdrawals"
+         << setw(2) << left << "|" << setw(10) << right << "-"
+         << setw(1) << right << " "
+         << setw(4) << left << "|" << setw(10) << right << "( " + totalWithStr + " )"
+         << setw(2) << "|" << endl;
+
+    cout << string(header1.length(), '-') << string(header2.length(), '-')
+         << string(header3.length(), '-') << string(header4.length() + 29, '-') << endl;
     // Allow user to navigate through transaction history (optional)
+    cout << setw(2) << left << "|" << setw(20) << left << currentTime()
+         << setw(2) << left << "|" << setw(25) << left << "Current Balance"
+         << setw(2) << left << "|" << setw(10) << right << totalDeposites - totalWithdraws
+         << setw(1) << right << " "
+         << setw(4) << left << "|" << setw(10) << right << "-"
+         << setw(2) << "|" << endl;
+    cout << string(header1.length(), '-') << string(header2.length(), '-')
+         << string(header3.length(), '-') << string(header4.length() + 29, '-') << endl;
     cout << "Displaying transaction history..." << endl;
-    // Implement logic to display transactions
+    cout << "Press Enter to continue...";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     return 8;
 }
 
