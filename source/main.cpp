@@ -633,7 +633,17 @@ vector<UserData> readUserDataFromFile()
     return users;
 }
 //? Check Balance - 4
-// Function to retrieve the current balance associated with the logged-in account
+/**
+ * Handles the process of inquiring about a user's account balance.
+ *
+ * This function prompts the user for their username (confirmed through
+ * `confirmTransactionUsername`). It then calculates the user's current balance
+ * by calling the `balance` function and passing the username. Finally, it displays
+ * the user's current balance to the console.
+ *
+ * @param from (unused parameter in this implementation).
+ * @return An integer value (purpose unclear in the provided code).
+ */
 int balanceInquiry(int from)
 {
     // Access account data based on username credentials
@@ -653,6 +663,23 @@ int balanceInquiry(int from)
 
     return 4;
 }
+/**
+ * Calculates the current balance for a user by analyzing their transaction history.
+ *
+ * This function takes a username as input and calls `readTransactionDataFromFile`
+ * to retrieve the user's transaction data from a file. It then iterates through
+ * the transactions and accumulates the total deposit and withdrawal amounts based on
+ * the transaction type ("withdraw", "deposite", "to", or "from").
+ *
+ * - "withdraw" and "to" transactions are considered debits (subtracting from balance).
+ * - "deposite" and "from" transactions are considered credits (adding to balance).
+ *
+ * Finally, the function returns the user's current balance by subtracting the total
+ * withdrawals from the total deposits.
+ *
+ * @param username The username for which to calculate the balance.
+ * @return The user's current balance as a float.
+ */
 float balance(string username)
 {
     float totalWithdraw = 0, totalDeposite = 0, floatValue;
@@ -676,7 +703,24 @@ float balance(string username)
     }
     return (totalDeposite - totalWithdraw);
 }
-// to make sure the username enterd are same
+/**
+ * Prompts the user for a username and confirms it before proceeding with a transaction.
+ *
+ * This function takes a transaction type ("deposit" or "withdraw") as input.
+ * It then prompts the user to enter a username for the transaction. If the username
+ * does not exist in the system (checked by a placeholder `usernameExists` function),
+ * it offers the user the option to create a new account (calling `createNewAccount`).
+ *
+ * Once a valid username is entered, the function prompts the user to confirm the
+ * username. It validates if the confirmed username matches the original entry.
+ * This confirmation step helps prevent typos or accidental usage of incorrect usernames.
+ *
+ * If the username is confirmed, the function returns the confirmed username as a string.
+ *
+ * @param type The type of transaction ("deposit" or "withdraw").
+ * @return The confirmed username as a string.
+ */
+
 string confirmTransactionUsername(string type)
 {
     string username, ConfirmUsername;
@@ -738,30 +782,59 @@ string confirmTransactionUsername(string type)
     } while (username != ConfirmUsername); // Repeat until username match
     return username;
 }
+/**
+ * Gets the current date and time in a formatted string (YYYY-MM-DD HH:MM:SS).
+ *
+ * This function retrieves the current time from the system and converts it
+ * to a human-readable format. The format used is year-month-day followed by
+ * a space, then hour:minute:second.
+ *
+ * @return A string containing the current date and time in YYYY-MM-DD HH:MM:SS format.
+ */
 string currentTime()
 {
+    // Get the current time in seconds since the epoch (January 1, 1970, 00:00:00 UTC)
     time_t now = time(0);            // Get current time in seconds since epoch
     tm *localTime = localtime(&now); // Convert to local time structure
-
+    // Convert the time_t value to a local time structure (tm)
+    // This structure holds various components of the date and time
     int year = localTime->tm_year + 1900; // Adjust for base year
-    int month = localTime->tm_mon + 1;    // Months are 0-indexed
+    // Months are 0-indexed (January is 0), so add 1 for human-readable format
+    int month = localTime->tm_mon + 1;
+
     int day = localTime->tm_mday;
     int hour = localTime->tm_hour;
     int minute = localTime->tm_min;
     int second = localTime->tm_sec;
 
-    // Format the date and time as desired
+    // Format the date and time as a string using string concatenation
     string formattedDateTime = to_string(year) + "-" +
                                to_string(month) + "-" +
                                to_string(day) + " " +
                                to_string(hour) + ":" +
                                to_string(minute) + ":" +
                                to_string(second);
-
+    // Return the formatted current date and time string
     return formattedDateTime;
 }
 //? deposite cash - 5
-// Function to allow depositing cash into the account
+
+/**
+ * Handles the process of depositing cash to a user's account.
+ *
+ * This function prompts the user for the username (which is confirmed
+ * through `confirmTransactionUsername`), deposit purpose, and amount.
+ * It then writes the transaction details (username, purpose, amount, type,
+ * "none" for recipient, current date/time) to a file named "username.txt"
+ * located in the "accounts" directory. The file format assumes a specific
+ * structure with data fields separated by "-". An empty line is appended after
+ * each transaction record.
+ *
+ * The function validates the deposit amount (non-negative) and allows the user
+ * to confirm the amount before writing the transaction data.
+ *
+ * @return An integer value.
+ */
 int depositeCash(int from)
 {
     int numOfData = 6;
@@ -822,6 +895,24 @@ int depositeCash(int from)
     return 5;
 }
 
+/**
+ * Handles the process of withdrawing cash from a user's account.
+ *
+ * This function prompts the user for the username (which is confirmed
+ * through `confirmTransactionUsername`), withdrawal purpose, and amount.
+ * It then checks the account balance (using a placeholder `balance` function)
+ * to ensure sufficient funds.
+ *
+ * If the balance is sufficient, the transaction details (username, purpose,
+ * amount, type, "none" for recipient, current date/time) are written to a file
+ * named "username.txt" located in the "accounts" directory. The file format
+ * assumes a specific structure with data fields separated by "-". An empty line
+ * is appended after each transaction record.
+ *
+ * If the balance is insufficient, an error message is displayed to the user.
+ *
+ * @return An integer value (purpose unclear in the provided code).
+ */
 //? Withdraw cash - 6
 int withdrawCash(int from)
 {
@@ -900,6 +991,27 @@ int withdrawCash(int from)
     }
     return 6;
 }
+
+/**
+ * Reads transaction data for a specific user from a file.
+ *
+ * This function takes the username as input and attempts to open a file named
+ * "username.txt" located in the "accounts" directory. The file is assumed to
+ * store transaction data in a specific format.
+ *
+ * The function parses the file line by line, extracting transaction details
+ * based on their position within the file. It uses a switch statement to assign
+ * data to the appropriate fields (username, purpose, amount, type, etc.) in a
+ * `transactionData` struct. Empty lines are used as delimiters between different
+ * users' transaction records.
+ *
+ * If the file is opened successfully, the function populates a `vector<transactionData>`
+ * with the extracted transactions and returns it. If the file cannot be opened,
+ * an error message is printed to standard error (cerr).
+ *
+ * @param username The username for which to read transaction data.
+ * @return A vector containing transaction data objects for the specified user.
+ */
 vector<transactionData> readTransactionDataFromFile(string username)
 {
     ifstream file("accounts/" + username + ".txt");
