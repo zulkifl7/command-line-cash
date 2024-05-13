@@ -1107,19 +1107,23 @@ vector<transactionData> readTransactionDataFromFile(string username)
  *
  * The function displays a success message with the transfer amount and recipient.
  *
- * @param from (unused parameter in this implementation).
- * @return An integer value (purpose unclear in the provided code).
+ * @param from
+ * @return An integer value 7.
  */
 int fundTransfer(int from)
 {
+    // Initialize Transaction Data
     int numOfData = 6;
     string keys[numOfData] = {"username", "purpose", "ammount", "type", "who", "dateTime"};
     string values[numOfData];
-    values[3] = "transfer";
-    values[5] = currentTime();
+    values[3] = "transfer";    // Transaction type
+    values[5] = currentTime(); // Set current date/time
+
+    // Get Sender and Recipient Usernames
     values[0] = confirmTransactionUsername("owener's account");
     values[4] = confirmTransactionUsername("who you want to send money");
 
+    // Get Transfer Details
     cout << "Enter the purpose of the transaction- ";
     getline(cin, values[1]);
     char confirm;
@@ -1158,7 +1162,7 @@ int fundTransfer(int from)
 
     if (balance(values[0]) > withdrawAmmount)
     {
-
+        // Write Transaction Data (if sufficient balance)
         ofstream withdrawFile("accounts/" + values[0] + ".txt", ios::app);
         ofstream recieveFile("accounts/" + values[4] + ".txt", ios::app);
         if (withdrawFile.is_open() && recieveFile.is_open())
@@ -1168,11 +1172,13 @@ int fundTransfer(int from)
             {
                 for (int k = 0; k < 2; k++)
                 {
+                    // Write to sender's file (type "to")
                     if (k == 0)
                     {
                         values[3] = "to";
                         withdrawFile << keys[i] << " - " << values[i] << endl;
                     }
+                    // Write to recipient's file (type "from", swap usernames)
                     else if (k == 1)
                     {
                         values[3] = "from";
@@ -1196,7 +1202,7 @@ int fundTransfer(int from)
     }
     else
     {
-
+        // Handle Insufficient Balance
         cout << "Insufficient Balance!!" << endl;
         cout << "Press Enter to continue...";
         cin.ignore(numeric_limits<streamsize>::max(), '\n');
