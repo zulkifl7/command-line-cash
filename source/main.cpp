@@ -891,7 +891,9 @@ int depositeCash(int from)
     // Prompt user for deposit amount
     // Validate deposit amount (e.g., non-negative value)
     // Update account balance in the data store based on deposit amount
-    cout << "Cash Deposited!"; // <<  Get deposit amount from user  << " successfully!" << endl;
+    cout << values[2] << " LKR Cash Deposited Sucessfully to " << values[0] << "'s Account!"; // <<  Get deposit amount from user  << " successfully!" << endl;
+    cout << "Press Enter to continue...";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     return 5;
 }
 
@@ -977,7 +979,9 @@ int withdrawCash(int from)
         // Prompt user for deposit amount
         // Validate deposit amount (e.g., non-negative value)
         // Update account balance in the data store based on deposit amount
-        cout << "Cash Withdrawed!"; // <<  Get deposit amount from user  << " successfully!" << endl;
+        cout << values[2] << " LKR Cash Withdrawed from" << values[0] << "'s Account"; // <<  Get deposit amount from user  << " successfully!" << endl;
+        cout << "Press Enter to continue...";
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
     }
     else
     {
@@ -1089,12 +1093,106 @@ vector<transactionData> readTransactionDataFromFile(string username)
 // Function to enable transferring funds to another account
 int fundTransfer(int from)
 {
-    // Prompt user for recipient account information (e.g., username or account number)
-    // Validate recipient information
-    // Prompt user for transfer amount
-    // Validate transfer amount (e.g., sufficient balance)
-    // Update account balances (sender and recipient) in the data store
-    cout << "Successfully transferred "; // << /* Get transfer amount from user */ << " to recipient." << endl;
+    int numOfData = 6;
+    string keys[numOfData] = {"username", "purpose", "ammount", "type", "who", "dateTime"};
+    string values[numOfData];
+    values[3] = "transfer";
+    values[5] = currentTime();
+    values[0] = confirmTransactionUsername("owener's account");
+    values[4] = confirmTransactionUsername("who you want to send money");
+
+    cout << "Enter the purpose of the transaction- ";
+    getline(cin, values[1]);
+    char confirm;
+    float withdrawAmmount;
+    do
+    {
+        // Discard a part of input beign in the buffer including newline
+        // in order to this to work we have to include <limits> header file
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Enter the ammount you want to transfer - ";
+        getline(cin, values[2]);
+
+        cout << "Confirm if the ammount is correct (Y/N) - ";
+        cin >> confirm;
+        stringstream buffer(values[2]);
+        buffer >> withdrawAmmount;
+        if (withdrawAmmount < 0)
+        {
+            cout << "Invalid transfer ammount!!" << endl;
+        }
+        if (confirm == 'y' || confirm == 'Y')
+        {
+            break;
+        }
+        else if (confirm == 'n' || confirm == 'N')
+        {
+        }
+        else
+        {
+            cout << "Invalid Input!!" << endl;
+        }
+    } while (true);
+    ifstream withdrawAmountCheck("accounts/" + values[0] + ".txt", ios::app);
+    string line;
+    // checking if the account balance is greater than the withdraw ammount
+
+    if (balance(values[0]) > withdrawAmmount)
+    {
+
+        ofstream withdrawFile("accounts/" + values[0] + ".txt", ios::app);
+        ofstream recieveFile("accounts/" + values[4] + ".txt", ios::app);
+        if (withdrawFile.is_open() && recieveFile.is_open())
+        {
+
+            for (int i = 0; i < numOfData; i++)
+            {
+                for (int k = 0; k < 2; k++)
+                {
+                    if (k == 0)
+                    {
+                        values[3] = "to";
+                        withdrawFile << keys[i] << " - " << values[i] << endl;
+                    }
+                    else if (k == 1)
+                    {
+                        values[3] = "from";
+                        string hold = values[0];
+                        values[0] = values[4];
+                        values[4] = hold;
+                        recieveFile << keys[i] << " - " << values[i] << endl;
+                    }
+                }
+            }
+            withdrawFile << endl;
+            recieveFile << endl;
+        }
+
+        // Prompt user for deposit amount
+        // Validate deposit amount (e.g., non-negative value)
+        // Update account balance in the data store based on deposit amount
+        cout << values[2] << " LKR transfered to " << values[4]
+             << "from" << values[0] << "'s Account" << endl; // <<  Get deposit amount from user  << " successfully!" << endl;
+        cout << "Press Enter to continue...";
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    }
+    else
+    {
+
+        cout << "Insufficient Balance!!" << endl;
+        cout << "Press Enter to continue...";
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        cout << "Press Enter to continue...";
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        homeScreen(6);
+
+        // Prompt user for recipient account information - username
+        // Validate recipient information
+        // Prompt user for transfer amount
+        // Validate transfer amount (e.g., sufficient balance)
+        // Update account balances (sender and recipient) in the data store
+        cout << "Successfully transferred "; // << /* Get transfer amount from user */ << " to recipient." << endl;
+    }
     return 7;
 }
 
