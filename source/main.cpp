@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #include <windows.h>
 #include <limits>    // Include for numeric_limits
 #include <fstream>   // to use file handling
@@ -70,6 +71,8 @@ int transactionHistory(int from);
 
 // account deactivation - 9
 int accountDeactivation(int from);
+// to remove userdata
+void removeFile(string username, int lines);
 
 // Login screen components
 string takePassword(); // function to take password without exposing
@@ -369,7 +372,7 @@ int createNewAccount(int from)
     // firstName - 0, lastName - 1, dateOfBirth - 2, nationalIdNumber - 3, userName - 4, password - 5
     int numOfData = 6; // using a variable in case if we need another field we can just incriment one and add that field to keys and work
     // To use a for loop to take the inputs
-    string keys[numOfData] = {"First Name", "Last Name", "Date Of Birth [yyy-mm-dd]", "National Id Number", "Username", "Password"};
+    string keys[numOfData] = {"First Name", "Last Name", "Date Of Birth [YYYY MM DD]", "National Id Number", "Username", "Password"};
     // to store the values user have entered
     string values[numOfData];
 
@@ -457,7 +460,8 @@ int createNewAccount(int from)
 
     // Handle potential errors during account creation
     cout << "New account created successfully!" << endl;
-
+    cout << "Press Enter to continue...";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
     // Close the file
     file.close();
     return 3;
@@ -1103,7 +1107,6 @@ int fundTransfer(int from)
     int numOfData = 6;
     string keys[numOfData] = {"username", "purpose", "ammount", "type", "who", "dateTime"};
     string values[numOfData];
-    values[3] = "transfer";    // Transaction type
     values[5] = currentTime(); // Set current date/time
 
     // Get Sender and Recipient Usernames
@@ -1316,9 +1319,99 @@ int transactionHistory(int from)
 // Function to permanently deactivate the logged-in user account
 int accountDeactivation(int from)
 {
-    // Prompt user for confirmation to deactivate
-    // Provide clear information about the irreversible nature of deactivation
-    // Deactivate the account by removing or marking it as inactive in the data store
-    cout << "Your account has been deactivated." << endl;
+    system("cls"); // cearing the cmd for a clean look
+    string type = "Deactivate account";
+    string username = confirmTransactionUsername(type);
+    string password = takePassword();
+    vector<UserData> users = readUserDataFromFile();
+
+    for (const UserData &user : users)
+    {
+        if (password == user.password)
+        {
+            do
+            {
+
+                char confirm;
+                cout << "Do you want to deactivate your account (Y/N) - ";
+                cin >> confirm;
+                cout << confirm << endl;
+                if (confirm == 'y' || confirm == 'Y')
+                {
+                    removeFile(username, 7);
+                    cout << "Your account has been deactivated." << endl;
+                    cout << "Press Enter to continue...";
+                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    break;
+                }
+                else if (confirm == 'n' || confirm == 'N')
+                {
+                    homeScreen(9);
+                    break;
+                }
+                else
+                {
+                    cout << "Invalid Input!!" << endl;
+                }
+            } while (true);
+        }
+    }
+
     return 9;
+}
+void removeFile(string username, int lines)
+{
+    string sourceFile = "aa.txt";
+    string destinationFile = "accountsCopy.txt";
+    int numOfData = 6;
+    string keys[numOfData] = {"First Name", "Last Name", "Date Of Birth [YYYY MM DD]", "National Id Number", "Username", "Password"};
+    vector<UserData> users = readUserDataFromFile(); // Assuming you have the vector
+    ofstream destination(destinationFile);
+
+    // Check if file open was successful
+    if (!destination.is_open())
+    {
+        // sending an error message
+        cerr << "Error opening file!" << endl;
+    }
+    // Loop through each user in the vector
+    for (const UserData &user : users)
+    {
+
+        if (user.username == username)
+        {
+        }
+        else
+        {
+            for (int i = 0; i < numOfData; i++)
+            {
+                string value;
+                switch (i)
+                {
+                case 0:
+                    value = user.firstName;
+                    break;
+                case 1:
+                    value = user.lastName;
+                    break;
+                case 2:
+                    value = user.dateOfBirth;
+                    break;
+                case 3:
+                    value = user.nationalIdNumber;
+                    break;
+                case 4:
+                    value = user.username;
+                    break;
+                case 5:
+                    value = user.password;
+                    break;
+                default:
+                    break;
+                }
+                destination << keys[i] << " - " << value << "\n";
+            }
+            destination << endl;
+        }
+    }
 }
