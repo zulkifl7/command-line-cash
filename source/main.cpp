@@ -8,6 +8,7 @@
 #include <sstream>   // to use flexible string data retreival and searches on data reciewing from the file
 #include <algorithm> // to use remove_if() function
 #include <ctime>     // To get current time
+#include <cstdlib>   // To remove a file using remove() function
 using namespace std;
 
 //! -- All Function Declaration Goes here
@@ -72,7 +73,9 @@ int transactionHistory(int from);
 // account deactivation - 9
 int accountDeactivation(int from);
 // to remove userdata
-void removeFile(string username, int lines);
+int removeFromAccountTxt(string username, int lines);
+// remove user's accounts file
+int removeFile(string username);
 
 // Login screen components
 string takePassword(); // function to take password without exposing
@@ -1338,10 +1341,19 @@ int accountDeactivation(int from)
                 cout << confirm << endl;
                 if (confirm == 'y' || confirm == 'Y')
                 {
-                    removeFile(username, 7);
-                    cout << "Your account has been deactivated." << endl;
-                    cout << "Press Enter to continue...";
-                    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    int inAccountsResults = removeFromAccountTxt(username, 7);
+                    int personalFileResults = removeFile(username);
+                    // check if removed in both area
+                    if (inAccountsResults && personalFileResults)
+                    {
+                        cout << "Your account has been deactivated." << endl;
+                        cout << "Press Enter to continue...";
+                        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                    }
+                    else
+                    {
+                        cout << "Failed to remove!" << endl;
+                    }
                     break;
                 }
                 else if (confirm == 'n' || confirm == 'N')
@@ -1359,10 +1371,10 @@ int accountDeactivation(int from)
 
     return 9;
 }
-void removeFile(string username, int lines)
+int removeFromAccountTxt(string username, int lines)
 {
-    string sourceFile = "aa.txt";
-    string destinationFile = "accountsCopy.txt";
+    string sourceFile = "accounts.txt.txt";
+    string destinationFile = "accounts.txt";
     int numOfData = 6;
     string keys[numOfData] = {"First Name", "Last Name", "Date Of Birth [YYYY MM DD]", "National Id Number", "Username", "Password"};
     vector<UserData> users = readUserDataFromFile(); // Assuming you have the vector
@@ -1373,6 +1385,7 @@ void removeFile(string username, int lines)
     {
         // sending an error message
         cerr << "Error opening file!" << endl;
+        return 0;
     }
     // Loop through each user in the vector
     for (const UserData &user : users)
@@ -1413,5 +1426,26 @@ void removeFile(string username, int lines)
             }
             destination << endl;
         }
+    }
+    return 1;
+}
+
+int removeFile(string username)
+{
+
+    string fileName = "accounts/" + username + ".txt";
+
+    // delete the file
+    // using c_str() to conver the string into char array because remove
+    // only allowes a char array as filename parameter
+    int result = remove(fileName.c_str());
+
+    if (result == 0)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
     }
 }
