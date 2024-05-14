@@ -248,7 +248,7 @@ string takePassword()
 int verifyLogin()
 {
     // fixed username and password
-    static string username = "group6", password = "group6@123";
+    static string username = "group6", password = "3a70f17564a07722144c157ea53149f1158001b91";
     string gotUsername, gotPassword;
 
     // getting username from user
@@ -256,7 +256,8 @@ int verifyLogin()
     cout << "Enter username - ";
     getline(cin, gotUsername);
     // getting password from user
-    gotPassword = takePassword();
+    gotPassword = hashIt(takePassword());
+    cout << gotPassword << endl;
 
     // verifying if the username and password is correct
     if (username == gotUsername && password == gotPassword)
@@ -439,7 +440,7 @@ int createNewAccount(int from)
         }
         else
         {
-            values[numOfData - 1] = password;
+            values[numOfData - 1] = hashIt(password);
         }
     } while (confirmPassword != password); // Repeat until passwords match
 
@@ -1329,7 +1330,7 @@ int accountDeactivation(int from)
     system("cls"); // cearing the cmd for a clean look
     string type = "Deactivate account";
     string username = confirmTransactionUsername(type);
-    string password = takePassword();
+    string password = hashIt(takePassword());
     vector<UserData> users = readUserDataFromFile();
 
     for (const UserData &user : users)
@@ -1377,7 +1378,7 @@ int accountDeactivation(int from)
 }
 int removeFromAccountTxt(string username, int lines)
 {
-    string sourceFile = "accounts.txt.txt";
+    string sourceFile = "accounts.txt";
     string destinationFile = "accounts.txt";
     int numOfData = 6;
     string keys[numOfData] = {"First Name", "Last Name", "Date Of Birth [YYYY MM DD]", "National Id Number", "Username", "Password"};
