@@ -9,6 +9,7 @@
 #include <algorithm> // to use remove_if() function
 #include <ctime>     // To get current time
 #include <cstdlib>   // To remove a file using remove() function
+#include <cmath>     // to use pow() function to take the power
 using namespace std;
 
 //! -- All Function Declaration Goes here
@@ -76,6 +77,9 @@ int accountDeactivation(int from);
 int removeFromAccountTxt(string username, int lines);
 // remove user's accounts file
 int removeFile(string username);
+
+// to hash the passwords
+string hashIt(string word);
 
 // Login screen components
 string takePassword(); // function to take password without exposing
@@ -1429,10 +1433,10 @@ int removeFromAccountTxt(string username, int lines)
     }
     return 1;
 }
-
+// Function to delete a user account file based on username
 int removeFile(string username)
 {
-
+    // Construct the filename by combining "accounts/" and username with ".txt"
     string fileName = "accounts/" + username + ".txt";
 
     // delete the file
@@ -1440,12 +1444,331 @@ int removeFile(string username)
     // only allowes a char array as filename parameter
     int result = remove(fileName.c_str());
 
+    // Check the deletion result
     if (result == 0)
     {
+        // File deleted successfully, return 1 to indicate success
         return 1;
     }
+
     else
     {
+        // File deletion failed, return 0 to indicate failure
         return 0;
     }
+}
+string hashIt(string word)
+{
+    string hexStringHold;
+    string hexString = "";
+    int count = 1;
+    long long int tot = 1;
+    int hold = 1;
+    long long int temp = 1;
+    for (char c : word)
+    {
+        switch (c)
+        {
+        case 'a':
+            hold = 65;
+            break;
+        case 'b':
+            hold = 67;
+            break;
+        case 'c':
+            hold = 68;
+            break;
+        case 'd':
+            hold = 69;
+            break;
+        case 'e':
+            hold = 70;
+            break;
+        case 'f':
+            hold = 71;
+            break;
+        case 'g':
+            hold = 72;
+            break;
+        case 'h':
+            hold = 73;
+            break;
+        case 'i':
+            hold = 74;
+            break;
+        case 'j':
+            hold = 75;
+            break;
+        case 'k':
+            hold = 76;
+            break;
+        case 'l':
+            hold = 77;
+            break;
+        case 'm':
+            hold = 78;
+            break;
+        case 'n':
+            hold = 79;
+            break;
+        case 'o':
+            hold = 80;
+            break;
+        case 'p':
+            hold = 81;
+            break;
+        case 'q':
+            hold = 82;
+            break;
+        case 'r':
+            hold = 83;
+            break;
+        case 's':
+            hold = 84;
+            break;
+        case 't':
+            hold = 85;
+            break;
+        case 'u':
+            hold = 86;
+            break;
+        case 'v':
+            hold = 87;
+            break;
+        case 'w':
+            hold = 88;
+            break;
+        case 'x':
+            hold = 89;
+            break;
+        case 'y':
+            hold = 90;
+            break;
+        case 'z':
+            hold = 91;
+            break;
+        case 'A':
+            hold = 165;
+            break;
+        case 'B':
+            hold = 167;
+            break;
+        case 'C':
+            hold = 168;
+            break;
+        case 'D':
+            hold = 169;
+            break;
+        case 'E':
+            hold = 170;
+            break;
+        case 'F':
+            hold = 171;
+            break;
+        case 'G':
+            hold = 172;
+            break;
+        case 'H':
+            hold = 173;
+            break;
+        case 'I':
+            hold = 174;
+            break;
+        case 'J':
+            hold = 175;
+            break;
+        case 'K':
+            hold = 176;
+            break;
+        case 'L':
+            hold = 177;
+            break;
+        case 'M':
+            hold = 178;
+            break;
+        case 'N':
+            hold = 179;
+            break;
+        case 'O':
+            hold = 180;
+            break;
+        case 'P':
+            hold = 181;
+            break;
+        case 'Q':
+            hold = 182;
+            break;
+        case 'R':
+            hold = 183;
+            break;
+        case 'S':
+            hold = 184;
+            break;
+        case 'T':
+            hold = 185;
+            break;
+        case 'U':
+            hold = 186;
+            break;
+        case 'V':
+            hold = 187;
+            break;
+        case 'W':
+            hold = 188;
+            break;
+        case 'X':
+            hold = 189;
+            break;
+        case 'Y':
+            hold = 190;
+            break;
+        case 'Z':
+            hold = 191;
+            break;
+        case '!':
+            hold = 465;
+            break;
+        case '@':
+            hold = 467;
+            break;
+        case '#':
+            hold = 468;
+            break;
+        case '$':
+            hold = 469;
+            break;
+        case '%':
+            hold = 470;
+            break;
+        case '^':
+            hold = 471;
+            break;
+        case '&':
+            hold = 472;
+            break;
+        case '*':
+            hold = 473;
+            break;
+        case '(':
+            hold = 474;
+            break;
+        case ')':
+            hold = 475;
+            break;
+        case '-':
+            hold = 476;
+            break;
+        case '_':
+            hold = 477;
+            break;
+        case '=':
+            hold = 478;
+            break;
+        case '+':
+            hold = 479;
+            break;
+        case '`':
+            hold = 480;
+            break;
+        case '~':
+            hold = 481;
+            break;
+        case '{':
+            hold = 482;
+            break;
+        case '}':
+            hold = 483;
+            break;
+        case '[':
+            hold = 484;
+            break;
+        case ']':
+            hold = 485;
+            break;
+        case '\\':
+            hold = 486;
+            break;
+        case '|':
+            hold = 487;
+            break;
+        case ',':
+            hold = 488;
+            break;
+        case '<':
+            hold = 489;
+            break;
+        case '.':
+            hold = 490;
+            break;
+        case '>':
+            hold = 491;
+            break;
+        case '/':
+            hold = 492;
+            break;
+        case '?':
+            hold = 493;
+            break;
+        case ':':
+            hold = 494;
+            break;
+        case ';':
+            hold = 495;
+            break;
+        case '0':
+            hold = 369;
+            break;
+        case '1':
+            hold = 370;
+            break;
+        case '2':
+            hold = 371;
+            break;
+        case '3':
+            hold = 383;
+            break;
+        case '4':
+            hold = 392;
+            break;
+        case '5':
+            hold = 523;
+            break;
+        case '6':
+            hold = 541;
+            break;
+        case '7':
+            hold = 554;
+            break;
+        case '8':
+            hold = 673;
+            break;
+        case '9':
+            hold = 550;
+            break;
+
+        default:
+            hold = 38;
+            break;
+        }
+
+        temp = pow(count, (hold % word.size()));
+        temp = temp * count * hold;
+        tot = tot + temp;
+        count++;
+        // cout << tot << " " << count + hold % word.size() << " " << hold << endl;
+        stringstream buffer;
+        buffer << hex << tot;
+        hexStringHold = buffer.str();
+        if (hold % 2 == 0)
+        {
+            hexString = hexString + hexStringHold;
+        }
+        else
+        {
+            hexString = hexStringHold + hexString;
+        }
+        tot = 1;
+    }
+
+    return hexString;
 }
