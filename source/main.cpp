@@ -12,7 +12,6 @@
 #include <cmath>     // to use pow() function to take the power
 using namespace std;
 
-//! -- All Function Declaration Goes here
 struct UserData
 {
     string firstName;
@@ -32,6 +31,7 @@ struct transactionData
     string dateTime;
 };
 
+//! -- All Function Declaration Goes here
 // a sub main function for development and testing perposes
 void subMain();
 
